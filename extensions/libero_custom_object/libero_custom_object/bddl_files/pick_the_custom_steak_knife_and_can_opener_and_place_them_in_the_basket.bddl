@@ -1,0 +1,60 @@
+(define (problem LIBERO_Floor_Manipulation)
+  (:domain robosuite)
+  (:language Pick the custom steak knife and can opener and place them in the basket)
+    (:regions
+      (bin_region
+          (:target floor)
+          (:ranges (
+              (-0.01 0.25 0.01 0.27)
+            )
+          )
+      )
+      (steak_knife_region
+          (:target floor)
+          (:ranges (
+              (-0.32 -0.42 -0.06 -0.10)
+            )
+          )
+      )
+      (can_opener_region
+          (:target floor)
+          (:ranges (
+              (-0.02 -0.08 0.24 0.14)
+            )
+          )
+      )
+      (contain_region
+          (:target basket_1)
+      )
+    )
+
+  (:fixtures
+    floor - floor
+  )
+
+  (:objects
+    custom_steak_knife_1 - custom_steak_knife
+    custom_can_opener_1 - custom_can_opener
+    basket_1 - basket
+  )
+
+  (:obj_of_interest
+    custom_steak_knife_1
+    custom_can_opener_1
+    basket_1
+  )
+
+  (:init
+    (On custom_steak_knife_1 floor_steak_knife_region)
+    (On custom_can_opener_1 floor_can_opener_region)
+    (On basket_1 floor_bin_region)
+  )
+
+  (:goal
+    (And
+      (In custom_steak_knife_1 basket_1_contain_region)
+      (In custom_can_opener_1 basket_1_contain_region)
+    )
+  )
+
+)

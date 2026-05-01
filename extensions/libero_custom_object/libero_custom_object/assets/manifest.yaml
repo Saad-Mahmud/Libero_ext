@@ -1,0 +1,43 @@
+objects:
+  - category_name: custom_alphabet_soup
+    asset_name: alphabet_soup
+    xml: alphabet_soup.xml
+    source_path: libero/libero/assets/stable_hope_objects/alphabet_soup
+    rotation: [1.5707963267948966, 1.5707963267948966]
+    rotation_axis: z
+    description: Sample extension copy of LIBERO's alphabet_soup asset for custom-object workflows.
+  - category_name: custom_knife
+    asset_name: knife
+    xml: knife.xml
+    source_path: primitive MJCF demo object
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    description: Lightweight custom knife demo made from MuJoCo primitive geoms.
+  - category_name: custom_scissors
+    asset_name: scissors
+    xml: model.xml
+    source_path: kevinzakka/mujoco_scanned_objects/models/Diamond_Visions_Scissors_Red
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    description: Red scissors scanned object converted for LIBERO custom-object demos.
+  - category_name: custom_hammer
+    asset_name: hammer
+    xml: model.xml
+    source_path: kevinzakka/mujoco_scanned_objects/models/Cole_Hardware_Hammer_Black
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    description: Black hammer scanned object converted for LIBERO custom-object demos.
+  - category_name: custom_steak_knife
+    asset_name: steak_knife
+    xml: steak_knife.xml
+    source_path: primitive MJCF demo object
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    description: Lightweight standalone steak-knife demo made from MuJoCo primitive geoms.
+  - category_name: custom_can_opener
+    asset_name: can_opener
+    xml: model.xml
+    source_path: kevinzakka/mujoco_scanned_objects/models/OXO_Soft_Works_Can_Opener_SnapLock
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    description: Can opener scanned object converted for LIBERO custom-object demos.
