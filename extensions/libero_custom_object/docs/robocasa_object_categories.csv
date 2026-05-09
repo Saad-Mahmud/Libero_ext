@@ -1,0 +1,199 @@
+category,groups,objaverse_count,lightwheel_count,aigen_count,total_instances,registry_types,graspable,washable,microwavable,cookable,fridgable,freezable,dishwashable,sources
+apple,fruit,22,0,10,32,fruit,True,True,False,True,True,False,False,objaverse aigen
+avocado,vegetable,6,0,11,17,vegetable,True,True,False,False,True,False,False,objaverse aigen
+bagel,bread_food,7,0,10,17,bread_food,False,False,False,False,True,False,False,objaverse aigen
+bagged_food,packaged_food,9,0,9,18,packaged_food,False,False,False,False,True,True,False,objaverse aigen
+baguette,bread_food,6,0,18,24,bread_food,True,False,False,False,True,True,False,objaverse aigen
+banana,fruit,22,0,10,32,fruit,True,True,False,False,True,False,False,objaverse aigen
+bar,packaged_food,10,0,7,17,packaged_food,True,False,False,False,True,True,False,objaverse aigen
+bar_soap,cleaner,4,0,8,12,cleaner,True,True,False,False,False,False,False,objaverse aigen
+beer,drink alcohol,16,0,9,25,drink alcohol,True,True,False,False,True,False,False,objaverse aigen
+bell_pepper,vegetable,4,0,7,11,vegetable,True,True,True,True,True,True,False,objaverse aigen
+bottled_drink,drink,5,0,14,19,drink,True,True,False,False,True,True,False,objaverse aigen
+bottled_water,drink,13,0,15,28,drink,True,True,False,False,True,True,False,objaverse aigen
+bowl,receptacle stackable,18,0,4,22,receptacle stackable,True,True,True,False,True,False,True,objaverse aigen
+boxed_drink,drink,7,0,15,22,drink,True,True,False,False,True,True,False,objaverse aigen
+boxed_food,packaged_food,10,0,6,16,packaged_food,True,False,True,False,True,True,False,objaverse aigen
+bread,bread_food,13,0,12,25,bread_food,True,False,False,False,True,True,False,objaverse aigen
+bread_flat,bread_food,4,0,12,16,bread_food,True,False,False,False,True,True,False,objaverse aigen
+broccoli,vegetable,3,0,15,18,vegetable,True,True,True,True,True,True,False,objaverse aigen
+cake,sweets,9,0,7,16,sweets,True,False,False,False,True,True,False,objaverse aigen
+can,drink,14,0,7,21,drink,True,True,False,False,True,True,False,objaverse aigen
+candle,decoration,15,0,10,25,decoration,True,False,False,False,False,False,False,objaverse aigen
+canned_food,packaged_food,16,0,7,23,packaged_food,True,True,True,False,True,True,False,objaverse aigen
+carrot,vegetable,7,0,9,16,vegetable,True,True,True,True,True,True,False,objaverse aigen
+cereal,packaged_food,14,0,9,23,packaged_food,True,False,False,False,False,False,False,objaverse aigen
+cheese,dairy,9,0,13,22,dairy,True,True,True,True,True,True,False,objaverse aigen
+chips,packaged_food,15,0,7,22,packaged_food,False,False,False,False,False,False,False,objaverse aigen
+chocolate,sweets,14,0,8,22,sweets,False,False,False,False,True,True,False,objaverse aigen
+coffee_cup,drink,18,0,6,24,drink,True,False,True,False,False,False,False,objaverse aigen
+condiment_bottle,condiment,3,0,10,13,condiment,True,True,False,False,True,False,False,objaverse aigen
+corn,vegetable,4,0,8,12,vegetable,True,True,True,True,True,True,False,objaverse aigen
+croissant,pastry,10,0,7,17,pastry,True,False,False,False,True,True,False,objaverse aigen
+cucumber,vegetable,6,0,12,18,vegetable,True,True,False,False,True,True,False,objaverse aigen
+cup,receptacle stackable,4,0,18,22,receptacle stackable,True,True,True,False,True,False,False,objaverse aigen
+cupcake,sweets,16,0,15,31,sweets,True,False,False,False,True,True,False,objaverse aigen
+cutting_board,receptacle,12,0,11,23,receptacle,False,True,False,False,False,False,False,objaverse aigen
+donut,sweets pastry,15,0,8,23,sweets pastry,True,False,False,False,True,True,False,objaverse aigen
+egg,dairy,13,0,15,28,dairy,True,True,True,True,True,False,False,objaverse aigen
+eggplant,vegetable,5,0,7,12,vegetable,True,True,True,True,True,True,False,objaverse aigen
+fish,meat,12,0,8,20,meat,True,True,True,True,True,True,False,objaverse aigen
+fork,utensil,11,0,10,21,utensil,False,True,True,True,False,False,False,objaverse aigen
+garlic,vegetable,5,0,13,18,vegetable,True,True,True,True,True,True,False,objaverse aigen
+hot_dog,cooked_food,7,0,11,18,cooked_food,True,False,True,True,True,False,False,objaverse aigen
+jam,packaged_food,7,0,19,26,packaged_food,True,True,False,False,True,False,False,objaverse aigen
+jug,receptacle,9,0,8,17,receptacle,True,True,False,False,True,False,False,objaverse aigen
+jug_wide_opening,receptacle,5,0,0,5,receptacle,True,True,False,False,True,False,False,objaverse
+ketchup,condiment,10,0,10,20,condiment,True,True,False,False,True,False,False,objaverse aigen
+kettle_non_electric,receptacle,18,13,7,38,receptacle,True,True,False,False,False,False,False,objaverse lightwheel aigen
+kiwi,fruit,6,0,11,17,fruit,True,True,False,False,True,True,False,objaverse aigen
+knife,utensil,27,0,11,38,utensil,False,True,True,True,False,False,True,objaverse aigen
+ladle,utensil,5,0,9,14,utensil,True,True,False,True,False,False,True,objaverse aigen
+lemon,vegetable,18,0,12,30,vegetable,True,True,False,True,True,True,False,objaverse aigen
+lime,vegetable,4,0,9,13,vegetable,True,True,False,True,True,True,False,objaverse aigen
+liquor,drink alcohol,11,0,10,21,drink alcohol,True,False,False,False,True,False,False,objaverse aigen
+mango,fruit,14,0,8,22,fruit,True,True,False,True,True,True,False,objaverse aigen
+milk,dairy drink,8,0,9,17,dairy drink,True,True,False,False,True,False,False,objaverse aigen
+mug,receptacle stackable,17,0,10,27,receptacle stackable,True,True,True,False,True,False,True,objaverse aigen
+mushroom,vegetable,14,0,9,23,vegetable,True,True,True,True,True,True,False,objaverse aigen
+onion,vegetable,9,0,7,16,vegetable,True,True,True,True,True,False,False,objaverse aigen
+orange,fruit,11,0,7,18,fruit,True,True,False,False,True,True,False,objaverse aigen
+pan,receptacle,19,0,3,22,receptacle,True,True,False,False,True,False,True,objaverse aigen
+pot,receptacle,0,10,1,11,receptacle,True,True,False,False,True,False,True,lightwheel aigen
+peach,fruit,7,0,11,18,fruit,True,True,False,False,True,True,False,objaverse aigen
+pear,fruit,12,0,14,26,fruit,True,True,False,False,True,True,False,objaverse aigen
+plate,receptacle,17,0,7,24,receptacle,False,True,True,False,True,False,True,objaverse aigen
+potato,vegetable,18,0,14,32,vegetable,True,True,True,True,True,True,False,objaverse aigen
+rolling_pin,tool,6,0,7,13,tool,True,True,False,False,False,False,False,objaverse aigen
+scissors,tool,11,0,7,18,tool,False,True,False,False,False,False,False,objaverse aigen
+shaker,condiment,4,0,7,11,condiment,True,False,False,False,False,False,False,objaverse aigen
+soap_dispenser,cleaner,6,12,11,29,cleaner,True,True,False,False,False,False,False,objaverse lightwheel aigen
+spatula,utensil,14,0,11,25,utensil,False,True,False,True,False,False,False,objaverse aigen
+sponge,cleaner,8,0,10,18,cleaner,True,True,False,False,False,False,False,objaverse aigen
+spoon,utensil,23,0,8,31,utensil,False,True,True,True,False,False,True,objaverse aigen
+spray,cleaner,3,6,13,22,cleaner,True,True,False,False,False,False,False,objaverse lightwheel aigen
+squash,vegetable,8,0,7,15,vegetable,True,True,True,True,True,True,False,objaverse aigen
+steak,meat,11,0,10,21,meat,True,True,True,True,True,True,False,objaverse aigen
+sweet_potato,vegetable,3,0,12,15,vegetable,True,True,True,True,True,True,False,objaverse aigen
+tangerine,fruit,7,0,13,20,fruit,True,True,False,False,True,True,False,objaverse aigen
+teapot,receptacle,11,0,7,18,receptacle,True,True,False,False,False,False,False,objaverse aigen
+tomato,vegetable,8,0,9,17,vegetable,True,True,True,True,True,False,False,objaverse aigen
+tray,receptacle,10,0,11,21,receptacle,False,True,False,False,True,False,False,objaverse aigen
+waffle,sweets,4,0,7,11,sweets,False,False,True,False,True,True,False,objaverse aigen
+water_bottle,drink,21,0,7,28,drink,True,True,False,False,True,True,False,objaverse aigen
+wine,drink alcohol,12,0,7,19,drink alcohol,True,True,False,False,False,False,False,objaverse aigen
+yogurt,dairy packaged_food,3,0,7,10,dairy packaged_food,True,True,False,False,True,True,False,objaverse aigen
+dates,fruit,0,0,13,13,fruit,False,True,False,False,True,True,False,aigen
+lemonade,drink,0,0,6,6,drink,True,False,False,False,True,False,False,aigen
+walnut,misc,0,0,8,8,,True,True,False,False,True,False,False,aigen
+cheese_grater,tool,0,12,9,21,tool,True,True,False,False,False,False,False,lightwheel aigen
+syrup_bottle,condiment,0,6,13,19,condiment,True,False,False,False,False,False,False,lightwheel aigen
+scallops,meat,0,0,16,16,meat,True,True,True,True,True,True,False,aigen
+candy,sweets,0,0,11,11,sweets,True,False,False,False,True,False,False,aigen
+whisk,utensil,0,6,9,15,utensil,True,True,False,False,False,False,False,lightwheel aigen
+pitcher,receptacle,0,12,13,25,receptacle,True,True,True,False,True,False,False,lightwheel aigen
+ice_cream,sweets,0,0,13,13,sweets,True,False,False,False,False,True,False,aigen
+cherry,fruit,0,0,12,12,fruit,True,True,False,False,True,True,False,aigen
+peanut_butter,packaged_food,0,0,13,13,packaged_food,True,False,False,False,False,True,False,aigen
+thermos,drink,0,0,13,13,drink,True,True,True,False,True,False,False,aigen
+ham,meat,0,0,9,9,meat,False,True,True,True,True,True,False,aigen
+dumpling,meat cooked_food,0,0,22,22,meat cooked_food,True,True,True,True,True,True,False,aigen
+cabbage,vegetable,0,0,17,17,vegetable,False,True,False,True,True,False,False,aigen
+lettuce,vegetable,0,6,9,15,vegetable,False,True,False,False,True,False,False,lightwheel aigen
+tongs,tool,0,6,7,13,tool,True,True,False,False,False,False,False,lightwheel aigen
+ginger,vegetable,0,0,7,7,vegetable,True,True,False,True,True,True,False,aigen
+ice_cube_tray,receptacle,0,6,9,15,receptacle,False,True,False,False,True,True,False,lightwheel aigen
+shrimp,meat,0,6,9,15,meat,True,True,True,True,True,True,False,lightwheel aigen
+cantaloupe,fruit,0,0,14,14,fruit,False,True,False,False,True,True,False,aigen
+honey_bottle,packaged_food,0,6,16,22,packaged_food,True,False,False,False,False,False,False,lightwheel aigen
+grapes,fruit,0,0,14,14,fruit,True,True,False,False,True,True,False,aigen
+spaghetti_box,packaged_food,0,0,11,11,packaged_food,False,False,False,False,False,False,False,aigen
+chili_pepper,vegetable,0,0,8,8,vegetable,True,True,True,True,True,True,False,aigen
+celery,vegetable,0,0,9,9,vegetable,True,True,True,True,True,True,False,aigen
+burrito,cooked_food,0,0,12,12,cooked_food,True,False,True,False,True,True,False,aigen
+olive_oil_bottle,packaged_food,0,0,15,15,packaged_food,True,False,False,False,False,False,False,aigen
+kebabs,cooked_food,0,0,15,15,cooked_food,True,False,True,True,True,True,False,aigen
+bottle_opener,tool,0,0,16,16,tool,False,True,False,False,False,False,False,aigen
+chicken_breast,meat,0,0,12,12,meat,True,True,True,True,True,True,False,aigen
+jello_cup,packaged_food,0,0,9,9,packaged_food,True,False,False,False,True,True,False,aigen
+lobster,meat,0,0,11,11,meat,True,True,True,True,True,True,False,aigen
+brussel_sprout,vegetable,0,0,14,14,vegetable,True,True,True,True,True,True,False,aigen
+sushi,meat,0,0,13,13,meat,True,False,False,False,True,True,False,aigen
+baking_sheet,receptacle,0,0,8,8,receptacle,False,True,False,False,False,False,False,aigen
+wine_glass,receptacle,0,0,7,7,receptacle,True,True,True,False,False,False,False,aigen
+asparagus,vegetable,0,0,13,13,vegetable,True,True,True,True,True,True,False,aigen
+lamb_chop,meat,0,0,8,8,meat,True,True,True,True,True,True,False,aigen
+pickle,vegetable,0,0,7,7,vegetable,True,True,False,False,True,False,False,aigen
+bacon,meat,0,0,11,11,meat,False,False,True,True,True,False,False,aigen
+canola_oil,packaged_food,0,0,14,14,packaged_food,True,False,False,False,False,False,False,aigen
+strawberry,fruit,0,0,10,10,fruit,True,True,False,False,True,True,False,aigen
+watermelon,fruit,0,0,12,12,fruit,False,True,False,False,True,False,False,aigen
+pizza_cutter,tool,0,6,9,15,tool,True,True,False,False,False,False,False,lightwheel aigen
+pomegranate,fruit,0,0,7,7,fruit,True,True,False,False,True,False,False,aigen
+apricot,fruit,0,0,9,9,fruit,True,True,False,False,True,False,False,aigen
+beet,vegetable,0,0,11,11,vegetable,True,True,False,True,True,False,False,aigen
+radish,vegetable,0,0,10,10,vegetable,True,True,False,False,True,False,False,aigen
+salsa,packaged_food,0,0,13,13,packaged_food,True,False,False,False,True,False,False,aigen
+artichoke,vegetable,0,0,10,10,vegetable,True,True,False,True,True,False,False,aigen
+scone,pastry bread_food,0,0,12,12,pastry bread_food,True,False,False,False,True,False,False,aigen
+hamburger,cooked_food,0,0,16,16,cooked_food,True,False,True,False,True,False,False,aigen
+raspberry,fruit,0,0,8,8,fruit,False,True,False,False,True,True,False,aigen
+tacos,cooked_food,0,0,8,8,cooked_food,True,False,True,False,True,False,False,aigen
+vinegar,packaged_food condiment,0,0,11,11,packaged_food condiment,True,False,False,False,False,False,False,aigen
+zucchini,vegetable,0,0,11,11,vegetable,True,True,True,True,True,True,False,aigen
+pork_loin,meat,0,0,15,15,meat,True,True,True,True,True,True,False,aigen
+pork_chop,meat,0,0,16,16,meat,True,True,True,True,True,True,False,aigen
+sausage,meat,0,0,16,16,meat,True,True,True,True,True,True,False,aigen
+coconut,fruit,0,0,15,15,fruit,False,True,False,False,True,False,False,aigen
+cauliflower,vegetable,0,0,10,10,vegetable,False,True,True,True,True,True,False,aigen
+lollipop,sweets,0,0,9,9,sweets,False,False,False,False,False,False,False,aigen
+salami,meat,0,0,13,13,meat,True,True,True,True,True,True,False,aigen
+butter_stick,dairy,0,0,13,13,dairy,True,False,True,True,True,True,False,aigen
+can_opener,tool,0,0,6,6,tool,False,True,False,False,False,False,False,aigen
+tofu,misc,0,0,17,17,,True,True,False,True,True,True,False,aigen
+pineapple,fruit,0,0,8,8,fruit,False,True,False,False,True,True,False,aigen
+skewers,meat cooked_food,0,0,6,6,meat cooked_food,True,True,True,True,True,False,False,aigen
+colander,receptacle,0,12,0,12,receptacle,True,True,False,False,True,False,True,lightwheel
+reamer,tool,0,12,0,12,tool,True,True,False,False,False,False,True,lightwheel
+ice_cube,iced_item,0,6,0,6,iced_item,True,True,False,False,False,True,False,lightwheel
+jar,decoration receptacle,0,23,0,23,decoration receptacle,True,True,False,False,False,False,False,lightwheel
+measuring_cup,tool,0,12,0,12,tool,True,True,False,False,False,False,True,lightwheel
+sandwich_bread,bread_food,0,11,0,11,bread_food,False,False,False,False,True,False,False,lightwheel
+strainer,tool receptacle,0,12,0,12,tool receptacle,True,True,False,False,False,False,True,lightwheel
+sugar_cube,sweets,0,6,0,6,sweets,True,False,False,False,False,False,False,lightwheel
+cinnamon,spice,0,12,0,12,spice,True,False,False,False,False,False,False,lightwheel
+cookie_dough_ball,sweets,0,12,0,12,sweets,True,False,False,False,True,True,False,lightwheel
+cream_cheese_stick,dairy,0,12,0,12,dairy,True,True,False,True,True,True,False,lightwheel
+digital_scale,tool,0,12,0,12,tool,False,False,False,False,False,False,False,lightwheel
+flour_bag,misc,0,12,0,12,,False,False,False,False,False,False,False,lightwheel
+hotdog_bun,bread_food,0,12,0,12,bread_food,True,False,True,True,True,True,False,lightwheel
+mayonnaise,condiment,0,12,0,12,condiment,True,False,False,False,True,False,False,lightwheel
+mustard,condiment,0,12,0,12,condiment,True,False,False,False,True,False,False,lightwheel
+oven_tray,receptacle,0,12,0,12,receptacle,False,True,False,False,False,False,False,lightwheel
+paprika,spice,0,12,0,12,spice,True,False,False,False,False,False,False,lightwheel
+turmeric,spice,0,12,0,12,spice,True,False,False,False,False,False,False,lightwheel
+pickle_slice,vegetable,0,12,0,12,vegetable,False,False,False,False,True,True,False,lightwheel
+tomato_slice,vegetable,0,12,0,12,vegetable,False,False,False,False,True,True,False,lightwheel
+turkey_slice,meat,0,12,0,12,meat,False,False,False,False,True,True,False,lightwheel
+straw,misc,0,12,0,12,,True,True,False,False,False,False,False,lightwheel
+tupperware,receptacle,0,12,0,12,receptacle,True,True,True,False,True,True,True,lightwheel
+chicken_drumstick,meat,0,12,0,12,meat,True,True,True,True,True,True,False,lightwheel
+glass_cup,receptacle stackable,0,24,0,24,receptacle stackable,True,True,True,False,True,False,True,lightwheel
+lemon_wedge,vegetable,0,12,0,12,vegetable,True,True,False,True,True,True,False,lightwheel
+marshmallow,sweets,0,6,0,6,sweets,True,False,True,True,True,True,False,lightwheel
+oil_and_vinegar_bottle,condiment,0,24,0,24,condiment,True,False,False,False,False,False,False,lightwheel
+pancake,sweets,0,6,0,6,sweets,False,False,True,True,True,True,False,lightwheel
+peeler,tool,0,6,0,6,tool,True,True,False,False,False,False,True,lightwheel
+saucepan,receptacle,3,12,0,15,receptacle,True,True,False,False,True,False,True,objaverse lightwheel
+saucepan_with_lid,receptacle,0,12,0,12,receptacle,True,True,False,False,True,False,True,lightwheel
+saucepan_lid,lid,0,12,0,12,lid,True,True,False,False,False,False,True,lightwheel
+wooden_spoon,utensil,0,12,0,12,utensil,True,True,False,True,False,False,False,lightwheel
+aluminum_foil,tool,0,6,0,6,tool,True,False,False,True,False,False,False,lightwheel
+dish_brush,cleaner tool,0,6,0,6,cleaner tool,True,True,False,False,False,False,False,lightwheel
+pizza,cooked_food,0,6,0,6,cooked_food,False,False,True,True,True,True,False,lightwheel
+kebab_skewer,cooked_food,0,6,0,6,cooked_food,True,False,True,True,True,True,False,lightwheel
+juice,drink,0,12,0,12,drink,True,True,False,False,True,False,False,lightwheel
+salt_and_pepper_shaker,spice,0,24,0,24,spice,True,True,False,False,False,False,False,lightwheel
+basket,receptacle,0,21,0,21,receptacle,False,True,False,False,False,False,False,lightwheel
+placemat,receptacle,0,19,0,19,receptacle,False,True,False,False,False,False,False,lightwheel
+blender_jug,receptacle,0,21,0,21,receptacle,True,True,False,False,True,False,False,lightwheel

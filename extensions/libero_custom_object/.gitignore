@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 outputs/
+generated_bddl/
 build/
 dist/
 *.egg-info/

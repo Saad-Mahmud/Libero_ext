@@ -1,0 +1,44 @@
+<mujoco model="custom_obvious_mesh_turbosquid_dynamite_vertical">
+  <asset>
+    <mesh name="visual_mesh" file="../turbosquid_dynamite/turbosquid_dynamite.obj" />
+  </asset>
+  <worldbody>
+    <body>
+      <body name="object">
+        <geom
+          conaffinity="0"
+          contype="0"
+          group="1"
+          mesh="visual_mesh"
+          pos="0.0000 0.0190 0.0950"
+          quat="0.7071068 0.7071068 0 0"
+          rgba="0.88 0.04 0.025 1"
+          type="mesh"
+        />
+
+        <geom
+          density="100"
+          friction="0.95 0.3 0.1"
+          group="0"
+          pos="0.0000 0.0000 0.0950"
+          rgba="0.8 0.8 0.8 0.0"
+          size="0.0350 0.0350 0.0950"
+          type="box"
+        />
+        <geom
+          name="reg_bbox"
+          conaffinity="0"
+          contype="0"
+          group="3"
+          pos="0.0000 0.0000 0.0950"
+          rgba="0 0 0 0"
+          size="0.0350 0.0350 0.0950"
+          type="box"
+        />
+      </body>
+      <site rgba="0 0 0 0" size="0.005" pos="0 0 0" name="bottom_site" />
+      <site rgba="0 0 0 0" size="0.005" pos="0 0 0.1900" name="top_site" />
+      <site rgba="0 0 0 0" size="0.005" pos="0.0400 0.0400 0" name="horizontal_radius_site" />
+    </body>
+  </worldbody>
+</mujoco>

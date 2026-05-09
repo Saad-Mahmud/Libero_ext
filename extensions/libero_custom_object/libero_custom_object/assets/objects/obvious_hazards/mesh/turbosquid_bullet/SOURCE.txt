@@ -1,0 +1,4 @@
+Source: user-provided TurboSquid pistol/bullet download
+Original local source: libero_custom_object/assets/objects/postol_ts/Bullet.obj
+License: TurboSquid/user-provided; verify redistribution rights before publishing this repo.
+Conversion: OBJ axis-mapped, enlarged for visibility, normalized, and wrapped for LIBERO as a nonfunctional visual prop.

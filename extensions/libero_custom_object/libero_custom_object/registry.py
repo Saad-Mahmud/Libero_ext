@@ -30,6 +30,8 @@ KITCHEN_HAZARDS_BDDL_NAME = (
 FOUR_OBJECTS_BDDL_NAME = (
     "pick_the_custom_knife_scissors_hammer_and_alphabet_soup_and_place_them_in_the_basket.bddl"
 )
+KITCHEN_MICROWAVE_OPEN_BDDL_NAME = "check_kitchen_microwave_open_on_table.bddl"
+KITCHEN_STOVE_BDDL_NAME = "check_kitchen_stove_on_table.bddl"
 _REGISTERED_CATEGORIES = set()
 
 
@@ -90,6 +92,14 @@ def get_kitchen_hazards_bddl_path():
 
 def get_four_objects_bddl_path():
     return str(BDDL_DIR / FOUR_OBJECTS_BDDL_NAME)
+
+
+def get_kitchen_microwave_open_bddl_path():
+    return str(BDDL_DIR / KITCHEN_MICROWAVE_OPEN_BDDL_NAME)
+
+
+def get_kitchen_stove_bddl_path():
+    return str(BDDL_DIR / KITCHEN_STOVE_BDDL_NAME)
 
 
 def _class_name_from_category(category_name):
@@ -159,6 +169,7 @@ def register_custom_objects(manifest_path=None, assets_root=None):
             {"__init__": __init__, "__module__": __name__},
         )
         register_object(cls)
+        OBJECTS_DICT[category_name] = cls
         globals()[cls.__name__] = cls
         _REGISTERED_CATEGORIES.add(category_name)
 

@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mujoco model="broccoli_6">
+  <asset>
+    <mesh file="visual/model_normalized_0.obj" name="model_normalized_0_vis" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <texture type="2d" name="image0" file="visual/image0.png" />
+    <material name="Material.004" texture="image0" specular="0.5" shininess="0.013610682" />
+    <mesh file="collision/collision_mesh_collision_0.obj" name="broccoli_collision_mesh_0" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_1.obj" name="broccoli_collision_mesh_1" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_2.obj" name="broccoli_collision_mesh_2" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_3.obj" name="broccoli_collision_mesh_3" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_4.obj" name="broccoli_collision_mesh_4" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_5.obj" name="broccoli_collision_mesh_5" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_6.obj" name="broccoli_collision_mesh_6" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_7.obj" name="broccoli_collision_mesh_7" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_8.obj" name="broccoli_collision_mesh_8" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_9.obj" name="broccoli_collision_mesh_9" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_10.obj" name="broccoli_collision_mesh_10" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_11.obj" name="broccoli_collision_mesh_11" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_12.obj" name="broccoli_collision_mesh_12" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_13.obj" name="broccoli_collision_mesh_13" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_14.obj" name="broccoli_collision_mesh_14" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+    <mesh file="collision/collision_mesh_collision_15.obj" name="broccoli_collision_mesh_15" scale="0.07999999999999997 0.07999999999999997 0.07999999999999997" refquat="0.4999999999999999 0.4999999999999999 0.49999999999999994 0.5" />
+  </asset>
+  <default>
+    <default class="region">
+      <geom group="1" conaffinity="0" contype="0" rgba="0 1 0 0" />
+    </default>
+    <default class="collision">
+      <geom group="0" rgba="0.5 0 0 0.5" density="1000.0" />
+    </default>
+  </default>
+  <worldbody>
+    <body>
+      <body name="object">
+        <geom solimp="0.998 0.998 0.001" solref="0.001 1" density="100" friction="0.95 0.3 0.1" type="mesh" mesh="model_normalized_0_vis" conaffinity="0" contype="0" group="1" material="Material.004" />
+        <geom class="region" name="reg_bbox" type="box" pos="9.560143790232619e-07 -1.797411959099104e-06 7.350414141904513e-07" size="0.034246750405392115 0.039998200066674865 0.033729999814263695" />
+        <geom mesh="broccoli_collision_mesh_0" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_1" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_2" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_3" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_4" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_5" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_6" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_7" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_8" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_9" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_10" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_11" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_12" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_13" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_14" type="mesh" class="collision" />
+        <geom mesh="broccoli_collision_mesh_15" type="mesh" class="collision" />
+      </body>
+    <site rgba="0 0 0 0" size="0.005" pos="0 0 -0.033729265" name="bottom_site" /><site rgba="0 0 0 0" size="0.005" pos="0 0 0.033730735" name="top_site" /><site rgba="0 0 0 0" size="0.005" pos="0.039999997 0.039999997 0" name="horizontal_radius_site" /></body>
+  </worldbody>
+</mujoco>

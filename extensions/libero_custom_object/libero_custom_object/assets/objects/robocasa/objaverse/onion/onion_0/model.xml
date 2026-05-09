@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mujoco model="onion_9">
+  <asset>
+    <mesh file="visual/model_normalized_0.obj" name="model_normalized_0_vis" scale="0.09999999999999996 0.09999999999999996 0.09999999999999996" refquat="0.7071067811865475 0.7071067811865476 0.0 0.0" />
+    <texture type="2d" name="image0" file="visual/image0.png" />
+    <material name="Red_Onion_PBR" texture="image0" specular="0.5" shininess="0.25" />
+    <mesh file="collision/collision_mesh_collision_0.obj" name="onion_collision_mesh_0" scale="0.09999999999999996 0.09999999999999996 0.09999999999999996" refquat="0.7071067811865475 0.7071067811865476 0.0 0.0" />
+    <mesh file="collision/collision_mesh_collision_1.obj" name="onion_collision_mesh_1" scale="0.09999999999999996 0.09999999999999996 0.09999999999999996" refquat="0.7071067811865475 0.7071067811865476 0.0 0.0" />
+  </asset>
+  <default>
+    <default class="region">
+      <geom group="1" conaffinity="0" contype="0" rgba="0 1 0 0" />
+    </default>
+    <default class="collision">
+      <geom group="0" rgba="0.5 0 0 0.5" density="1000.0" />
+    </default>
+  </default>
+  <worldbody>
+    <body>
+      <body name="object">
+        <geom solimp="0.998 0.998 0.001" solref="0.001 1" density="100" friction="0.95 0.3 0.1" type="mesh" mesh="model_normalized_0_vis" conaffinity="0" contype="0" group="1" material="Red_Onion_PBR" />
+        <geom class="region" name="reg_bbox" type="box" pos="0.0 0.0 0.0" size="0.03636883799999999 0.04999999999999998 0.03601368999999999" />
+        <geom mesh="onion_collision_mesh_0" type="mesh" class="collision" />
+        <geom mesh="onion_collision_mesh_1" type="mesh" class="collision" />
+      </body>
+    <site rgba="0 0 0 0" size="0.005" pos="0 0 -0.03601369" name="bottom_site" /><site rgba="0 0 0 0" size="0.005" pos="0 0 0.03601369" name="top_site" /><site rgba="0 0 0 0" size="0.005" pos="0.05 0.05 0" name="horizontal_radius_site" /></body>
+  </worldbody>
+</mujoco>

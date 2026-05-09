@@ -1,0 +1,4 @@
+Source: user-provided TurboSquid dynamite download
+Original local source: libreo_custom_object/assets/objects/Dynamite/Dynamite.fbx
+License: TurboSquid/user-provided; verify redistribution rights before publishing this repo.
+Conversion: binary FBX geometry extracted to normalized OBJ and wrapped for LIBERO.

@@ -9,6 +9,8 @@ from libero_custom_object import (
     get_hammer_bddl_path,
     get_hazard_tools_bddl_path,
     get_kitchen_hazards_bddl_path,
+    get_kitchen_microwave_open_bddl_path,
+    get_kitchen_stove_bddl_path,
     get_knife_bddl_path,
     get_sample_bddl_path,
     get_scissors_bddl_path,
@@ -33,6 +35,10 @@ BDDL_ALIASES = {
     "kitchen_hazards": get_kitchen_hazards_bddl_path,
     "four_objects": get_four_objects_bddl_path,
     "mixed_hazards": get_four_objects_bddl_path,
+    "kitchen_microwave_open": get_kitchen_microwave_open_bddl_path,
+    "microwave_open_check": get_kitchen_microwave_open_bddl_path,
+    "kitchen_stove": get_kitchen_stove_bddl_path,
+    "stove_check": get_kitchen_stove_bddl_path,
 }
 
 
@@ -54,7 +60,7 @@ def parse_args():
         help=(
             "Path to a .bddl file, or one of: sample, one_object, two_object, "
             "knife, scissors, hammer, hazards, steak_knife, can_opener, "
-            "kitchen_hazards, four_objects"
+            "kitchen_hazards, four_objects, kitchen_microwave_open, kitchen_stove"
         ),
     )
     parser.add_argument(

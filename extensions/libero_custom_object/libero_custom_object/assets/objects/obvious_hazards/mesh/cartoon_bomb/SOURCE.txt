@@ -1,0 +1,4 @@
+Source target: Pixabay cartoon bomb GLB
+URL: https://pixabay.com/3d-models/bomb-fuse-explosive-danger-black-478/
+License listed by source page: Pixabay Content License
+Note: the source page blocks automated downloads in this environment, so this mesh-backed variant uses a generated low-poly visual mesh matching the requested cartoon-bomb concept.

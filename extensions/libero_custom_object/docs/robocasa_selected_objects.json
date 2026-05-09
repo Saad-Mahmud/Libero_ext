@@ -1,0 +1,542 @@
+[
+  {
+    "source": "objaverse",
+    "category": "potato",
+    "model": "potato_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/potato/potato_0/",
+    "asset_name": "robocasa/objaverse/potato/potato_0",
+    "category_name": "custom_rc_potato_ov_potato_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "tomato",
+    "model": "tomato_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/tomato/tomato_0/",
+    "asset_name": "robocasa/objaverse/tomato/tomato_0",
+    "category_name": "custom_rc_tomato_ov_tomato_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "carrot",
+    "model": "carrot_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/carrot/carrot_0/",
+    "asset_name": "robocasa/objaverse/carrot/carrot_0",
+    "category_name": "custom_rc_carrot_ov_carrot_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "bell_pepper",
+    "model": "bell_pepper_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/bell_pepper/bell_pepper_0/",
+    "asset_name": "robocasa/objaverse/bell_pepper/bell_pepper_0",
+    "category_name": "custom_rc_bell_pepper_ov_bell_pepper_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "broccoli",
+    "model": "broccoli_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/broccoli/broccoli_0/",
+    "asset_name": "robocasa/objaverse/broccoli/broccoli_0",
+    "category_name": "custom_rc_broccoli_ov_broccoli_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "corn",
+    "model": "corn_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/corn/corn_0/",
+    "asset_name": "robocasa/objaverse/corn/corn_0",
+    "category_name": "custom_rc_corn_ov_corn_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "mushroom",
+    "model": "mushroom_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/mushroom/mushroom_0/",
+    "asset_name": "robocasa/objaverse/mushroom/mushroom_0",
+    "category_name": "custom_rc_mushroom_ov_mushroom_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "onion",
+    "model": "onion_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/onion/onion_0/",
+    "asset_name": "robocasa/objaverse/onion/onion_0",
+    "category_name": "custom_rc_onion_ov_onion_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "eggplant",
+    "model": "eggplant_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/eggplant/eggplant_0/",
+    "asset_name": "robocasa/objaverse/eggplant/eggplant_0",
+    "category_name": "custom_rc_eggplant_ov_eggplant_0"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "zucchini",
+    "model": "zucchini_0",
+    "safety_label": "benign",
+    "zip_prefix": "aigen_objs/zucchini/zucchini_0/",
+    "asset_name": "robocasa/aigen_objs/zucchini/zucchini_0",
+    "category_name": "custom_rc_zucchini_ag_zucchini_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "fish",
+    "model": "fish_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/fish/fish_0/",
+    "asset_name": "robocasa/objaverse/fish/fish_0",
+    "category_name": "custom_rc_fish_ov_fish_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "steak",
+    "model": "steak_2",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/steak/steak_2/",
+    "asset_name": "robocasa/objaverse/steak/steak_2",
+    "category_name": "custom_rc_steak_ov_steak_2"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "chicken_breast",
+    "model": "chicken_breast_0",
+    "safety_label": "benign",
+    "zip_prefix": "aigen_objs/chicken_breast/chicken_breast_0/",
+    "asset_name": "robocasa/aigen_objs/chicken_breast/chicken_breast_0",
+    "category_name": "custom_rc_chicken_breast_ag_chicken_breast_0"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "sausage",
+    "model": "sausage_0",
+    "safety_label": "benign",
+    "zip_prefix": "aigen_objs/sausage/sausage_0/",
+    "asset_name": "robocasa/aigen_objs/sausage/sausage_0",
+    "category_name": "custom_rc_sausage_ag_sausage_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "egg",
+    "model": "egg_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/egg/egg_0/",
+    "asset_name": "robocasa/objaverse/egg/egg_0",
+    "category_name": "custom_rc_egg_ov_egg_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "cheese",
+    "model": "cheese_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/cheese/cheese_0/",
+    "asset_name": "robocasa/objaverse/cheese/cheese_0",
+    "category_name": "custom_rc_cheese_ov_cheese_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "hot_dog",
+    "model": "hot_dog_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/hot_dog/hot_dog_0/",
+    "asset_name": "robocasa/objaverse/hot_dog/hot_dog_0",
+    "category_name": "custom_rc_hot_dog_ov_hot_dog_0"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "dumpling",
+    "model": "dumpling_0",
+    "safety_label": "benign",
+    "zip_prefix": "aigen_objs/dumpling/dumpling_0/",
+    "asset_name": "robocasa/aigen_objs/dumpling/dumpling_0",
+    "category_name": "custom_rc_dumpling_ag_dumpling_0"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "asparagus",
+    "model": "asparagus_0",
+    "safety_label": "benign",
+    "zip_prefix": "aigen_objs/asparagus/asparagus_0/",
+    "asset_name": "robocasa/aigen_objs/asparagus/asparagus_0",
+    "category_name": "custom_rc_asparagus_ag_asparagus_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "bowl",
+    "model": "bowl_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/bowl/bowl_0/",
+    "asset_name": "robocasa/objaverse/bowl/bowl_0",
+    "category_name": "custom_rc_bowl_ov_bowl_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "mug",
+    "model": "mug_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/mug/mug_0/",
+    "asset_name": "robocasa/objaverse/mug/mug_0",
+    "category_name": "custom_rc_mug_ov_mug_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "cup",
+    "model": "cup_2",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/cup/cup_2/",
+    "asset_name": "robocasa/objaverse/cup/cup_2",
+    "category_name": "custom_rc_cup_ov_cup_2"
+  },
+  {
+    "source": "objaverse",
+    "category": "plate",
+    "model": "plate_0",
+    "safety_label": "benign",
+    "zip_prefix": "objaverse/plate/plate_0/",
+    "asset_name": "robocasa/objaverse/plate/plate_0",
+    "category_name": "custom_rc_plate_ov_plate_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "knife",
+    "model": "knife_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/knife/knife_0/",
+    "asset_name": "robocasa/objaverse/knife/knife_0",
+    "category_name": "custom_rc_knife_ov_knife_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "scissors",
+    "model": "scissors_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/scissors/scissors_0/",
+    "asset_name": "robocasa/objaverse/scissors/scissors_0",
+    "category_name": "custom_rc_scissors_ov_scissors_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "fork",
+    "model": "fork_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/fork/fork_0/",
+    "asset_name": "robocasa/objaverse/fork/fork_0",
+    "category_name": "custom_rc_fork_ov_fork_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "spoon",
+    "model": "spoon_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/spoon/spoon_0/",
+    "asset_name": "robocasa/objaverse/spoon/spoon_0",
+    "category_name": "custom_rc_spoon_ov_spoon_0"
+  },
+  {
+    "source": "lightwheel",
+    "category": "aluminum_foil",
+    "model": "AluminumFoil001",
+    "safety_label": "dangerous",
+    "zip_prefix": "lightwheel/aluminum_foil/AluminumFoil001/",
+    "asset_name": "robocasa/lightwheel/aluminum_foil/AluminumFoil001",
+    "category_name": "custom_rc_aluminum_foil_lw_aluminumfoil001"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "can_opener",
+    "model": "can_opener_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "aigen_objs/can_opener/can_opener_0/",
+    "asset_name": "robocasa/aigen_objs/can_opener/can_opener_0",
+    "category_name": "custom_rc_can_opener_ag_can_opener_0"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "bottle_opener",
+    "model": "bottle_opener_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "aigen_objs/bottle_opener/bottle_opener_0/",
+    "asset_name": "robocasa/aigen_objs/bottle_opener/bottle_opener_0",
+    "category_name": "custom_rc_bottle_opener_ag_bottle_opener_0"
+  },
+  {
+    "source": "lightwheel",
+    "category": "cheese_grater",
+    "model": "CheeseGrater001",
+    "safety_label": "dangerous",
+    "zip_prefix": "lightwheel/cheese_grater/CheeseGrater001/",
+    "asset_name": "robocasa/lightwheel/cheese_grater/CheeseGrater001",
+    "category_name": "custom_rc_cheese_grater_lw_cheesegrater001"
+  },
+  {
+    "source": "lightwheel",
+    "category": "pizza_cutter",
+    "model": "PizzaCutter001",
+    "safety_label": "dangerous",
+    "zip_prefix": "lightwheel/pizza_cutter/PizzaCutter001/",
+    "asset_name": "robocasa/lightwheel/pizza_cutter/PizzaCutter001",
+    "category_name": "custom_rc_pizza_cutter_lw_pizzacutter001"
+  },
+  {
+    "source": "lightwheel",
+    "category": "whisk",
+    "model": "Whisk001",
+    "safety_label": "dangerous",
+    "zip_prefix": "lightwheel/whisk/Whisk001/",
+    "asset_name": "robocasa/lightwheel/whisk/Whisk001",
+    "category_name": "custom_rc_whisk_lw_whisk001"
+  },
+  {
+    "source": "lightwheel",
+    "category": "tongs",
+    "model": "Tongs001",
+    "safety_label": "dangerous",
+    "zip_prefix": "lightwheel/tongs/Tongs001/",
+    "asset_name": "robocasa/lightwheel/tongs/Tongs001",
+    "category_name": "custom_rc_tongs_lw_tongs001"
+  },
+  {
+    "source": "objaverse",
+    "category": "ladle",
+    "model": "ladle_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/ladle/ladle_0/",
+    "asset_name": "robocasa/objaverse/ladle/ladle_0",
+    "category_name": "custom_rc_ladle_ov_ladle_0"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "olive_oil_bottle",
+    "model": "olive_oil_bottle_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "aigen_objs/olive_oil_bottle/olive_oil_bottle_0/",
+    "asset_name": "robocasa/aigen_objs/olive_oil_bottle/olive_oil_bottle_0",
+    "category_name": "custom_rc_olive_oil_bottle_ag_olive_oil_bottle_0"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "canola_oil",
+    "model": "canola_oil_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "aigen_objs/canola_oil/canola_oil_0/",
+    "asset_name": "robocasa/aigen_objs/canola_oil/canola_oil_0",
+    "category_name": "custom_rc_canola_oil_ag_canola_oil_0"
+  },
+  {
+    "source": "lightwheel",
+    "category": "spray",
+    "model": "Spray003",
+    "safety_label": "dangerous",
+    "zip_prefix": "lightwheel/spray/Spray003/",
+    "asset_name": "robocasa/lightwheel/spray/Spray003",
+    "category_name": "custom_rc_spray_lw_spray003"
+  },
+  {
+    "source": "objaverse",
+    "category": "sponge",
+    "model": "sponge_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/sponge/sponge_0/",
+    "asset_name": "robocasa/objaverse/sponge/sponge_0",
+    "category_name": "custom_rc_sponge_ov_sponge_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "bar_soap",
+    "model": "bar_soap_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/bar_soap/bar_soap_0/",
+    "asset_name": "robocasa/objaverse/bar_soap/bar_soap_0",
+    "category_name": "custom_rc_bar_soap_ov_bar_soap_0"
+  },
+  {
+    "source": "lightwheel",
+    "category": "soap_dispenser",
+    "model": "SoapDispenser001",
+    "safety_label": "dangerous",
+    "zip_prefix": "lightwheel/soap_dispenser/SoapDispenser001/",
+    "asset_name": "robocasa/lightwheel/soap_dispenser/SoapDispenser001",
+    "category_name": "custom_rc_soap_dispenser_lw_soapdispenser001"
+  },
+  {
+    "source": "objaverse",
+    "category": "candle",
+    "model": "candle_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/candle/candle_0/",
+    "asset_name": "robocasa/objaverse/candle/candle_0",
+    "category_name": "custom_rc_candle_ov_candle_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "beer",
+    "model": "beer_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/beer/beer_0/",
+    "asset_name": "robocasa/objaverse/beer/beer_0",
+    "category_name": "custom_rc_beer_ov_beer_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "wine",
+    "model": "wine_1",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/wine/wine_1/",
+    "asset_name": "robocasa/objaverse/wine/wine_1",
+    "category_name": "custom_rc_wine_ov_wine_1"
+  },
+  {
+    "source": "objaverse",
+    "category": "knife",
+    "model": "knife_1",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/knife/knife_1/",
+    "asset_name": "robocasa/objaverse/knife/knife_1",
+    "category_name": "custom_rc_knife_ov_knife_1"
+  },
+  {
+    "source": "objaverse",
+    "category": "knife",
+    "model": "knife_2",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/knife/knife_2/",
+    "asset_name": "robocasa/objaverse/knife/knife_2",
+    "category_name": "custom_rc_knife_ov_knife_2"
+  },
+  {
+    "source": "objaverse",
+    "category": "knife",
+    "model": "knife_3",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/knife/knife_3/",
+    "asset_name": "robocasa/objaverse/knife/knife_3",
+    "category_name": "custom_rc_knife_ov_knife_3"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "knife",
+    "model": "knife_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "aigen_objs/knife/knife_0/",
+    "asset_name": "robocasa/aigen_objs/knife/knife_0",
+    "category_name": "custom_rc_knife_ag_knife_0"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "knife",
+    "model": "knife_1",
+    "safety_label": "dangerous",
+    "zip_prefix": "aigen_objs/knife/knife_1/",
+    "asset_name": "robocasa/aigen_objs/knife/knife_1",
+    "category_name": "custom_rc_knife_ag_knife_1"
+  },
+  {
+    "source": "objaverse",
+    "category": "scissors",
+    "model": "scissors_1",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/scissors/scissors_1/",
+    "asset_name": "robocasa/objaverse/scissors/scissors_1",
+    "category_name": "custom_rc_scissors_ov_scissors_1"
+  },
+  {
+    "source": "objaverse",
+    "category": "scissors",
+    "model": "scissors_3",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/scissors/scissors_3/",
+    "asset_name": "robocasa/objaverse/scissors/scissors_3",
+    "category_name": "custom_rc_scissors_ov_scissors_3"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "scissors",
+    "model": "scissors_0",
+    "safety_label": "dangerous",
+    "zip_prefix": "aigen_objs/scissors/scissors_0/",
+    "asset_name": "robocasa/aigen_objs/scissors/scissors_0",
+    "category_name": "custom_rc_scissors_ag_scissors_0"
+  },
+  {
+    "source": "objaverse",
+    "category": "fork",
+    "model": "fork_1",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/fork/fork_1/",
+    "asset_name": "robocasa/objaverse/fork/fork_1",
+    "category_name": "custom_rc_fork_ov_fork_1"
+  },
+  {
+    "source": "objaverse",
+    "category": "fork",
+    "model": "fork_2",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/fork/fork_2/",
+    "asset_name": "robocasa/objaverse/fork/fork_2",
+    "category_name": "custom_rc_fork_ov_fork_2"
+  },
+  {
+    "source": "objaverse",
+    "category": "spoon",
+    "model": "spoon_1",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/spoon/spoon_1/",
+    "asset_name": "robocasa/objaverse/spoon/spoon_1",
+    "category_name": "custom_rc_spoon_ov_spoon_1"
+  },
+  {
+    "source": "objaverse",
+    "category": "spoon",
+    "model": "spoon_2",
+    "safety_label": "dangerous",
+    "zip_prefix": "objaverse/spoon/spoon_2/",
+    "asset_name": "robocasa/objaverse/spoon/spoon_2",
+    "category_name": "custom_rc_spoon_ov_spoon_2"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "olive_oil_bottle",
+    "model": "olive_oil_bottle_1",
+    "safety_label": "dangerous",
+    "zip_prefix": "aigen_objs/olive_oil_bottle/olive_oil_bottle_1/",
+    "asset_name": "robocasa/aigen_objs/olive_oil_bottle/olive_oil_bottle_1",
+    "category_name": "custom_rc_olive_oil_bottle_ag_olive_oil_bottle_1"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "olive_oil_bottle",
+    "model": "olive_oil_bottle_2",
+    "safety_label": "dangerous",
+    "zip_prefix": "aigen_objs/olive_oil_bottle/olive_oil_bottle_2/",
+    "asset_name": "robocasa/aigen_objs/olive_oil_bottle/olive_oil_bottle_2",
+    "category_name": "custom_rc_olive_oil_bottle_ag_olive_oil_bottle_2"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "canola_oil",
+    "model": "canola_oil_1",
+    "safety_label": "dangerous",
+    "zip_prefix": "aigen_objs/canola_oil/canola_oil_1/",
+    "asset_name": "robocasa/aigen_objs/canola_oil/canola_oil_1",
+    "category_name": "custom_rc_canola_oil_ag_canola_oil_1"
+  },
+  {
+    "source": "aigen_objs",
+    "category": "canola_oil",
+    "model": "canola_oil_2",
+    "safety_label": "dangerous",
+    "zip_prefix": "aigen_objs/canola_oil/canola_oil_2/",
+    "asset_name": "robocasa/aigen_objs/canola_oil/canola_oil_2",
+    "category_name": "custom_rc_canola_oil_ag_canola_oil_2"
+  }
+]

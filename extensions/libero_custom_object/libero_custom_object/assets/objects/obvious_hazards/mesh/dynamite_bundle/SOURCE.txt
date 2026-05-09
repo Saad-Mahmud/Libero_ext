@@ -1,0 +1,5 @@
+Source: Get3DModels Dynamite Stick Bundle
+URL: https://www.get3dmodels.com/tools-and-gadgets/dynamite-stick-bundle/
+Downloaded GLB: https://www.get3dmodels.com/download/tnt_light_the_fuse_by_get3dmodels.glb
+License listed by source page: CC Attribution
+Author listed by source page: Chenchanchong

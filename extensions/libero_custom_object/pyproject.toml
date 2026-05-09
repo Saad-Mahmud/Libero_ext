@@ -22,5 +22,7 @@ libero_custom_object = [
   "assets/objects/hammer/*",
   "assets/objects/steak_knife/*",
   "assets/objects/can_opener/*",
+  "assets/objects/obvious_hazards/**/*",
+  "assets/objects/robocasa/**/*",
   "bddl_files/*.bddl",
 ]

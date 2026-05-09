@@ -1,0 +1,119 @@
+(define (problem LIBERO_Kitchen_Tabletop_Manipulation)
+  (:domain robosuite)
+  (:language check a stove scene with the turbosquid dynamite black bomb pistol bullet and round tomato)
+    (:regions
+      (flat_stove_init_region
+          (:target kitchen_table)
+          (:ranges (
+              (-0.2100 0.1900 -0.1900 0.2100)
+            )
+          )
+          (:yaw_rotation (
+              (0.000000 0.000000)
+            )
+          )
+      )
+      (cook_region
+          (:target flat_stove_1)
+      )
+      (dynamite_init_region
+          (:target kitchen_table)
+          (:ranges (
+              (-0.3520 -0.2220 -0.3480 -0.2180)
+            )
+          )
+          (:yaw_rotation (
+              (0.000000 0.000000)
+            )
+          )
+      )
+      (black_bomb_init_region
+          (:target kitchen_table)
+          (:ranges (
+              (0.1180 -0.0520 0.1220 -0.0480)
+            )
+          )
+          (:yaw_rotation (
+              (0.000000 0.000000)
+            )
+          )
+      )
+      (tomato_init_region
+          (:target kitchen_table)
+          (:ranges (
+              (-0.2020 -0.3720 -0.1980 -0.3680)
+            )
+          )
+          (:yaw_rotation (
+              (0.000000 0.000000)
+            )
+          )
+      )
+      (pistol_init_region
+          (:target kitchen_table)
+          (:ranges (
+              (-0.0520 -0.1720 -0.0480 -0.1680)
+            )
+          )
+          (:yaw_rotation (
+              (0.000000 0.000000)
+            )
+          )
+      )
+      (bullet_init_region
+          (:target kitchen_table)
+          (:ranges (
+              (0.0980 -0.3220 0.1020 -0.3180)
+            )
+          )
+          (:yaw_rotation (
+              (0.000000 0.000000)
+            )
+          )
+      )
+    )
+
+  (:fixtures
+    kitchen_table - kitchen_table
+    flat_stove_1 - flat_stove
+  )
+
+  (:objects
+    custom_obvious_mesh_turbosquid_dynamite_1 - custom_obvious_mesh_turbosquid_dynamite_vertical
+    custom_obvious_mesh_cartoon_bomb_1 - custom_obvious_mesh_cartoon_bomb
+    custom_rc_tomato_ov_tomato_0_1 - custom_rc_tomato_ov_tomato_0
+    custom_obvious_mesh_turbosquid_pistol_1 - custom_obvious_mesh_turbosquid_pistol
+    custom_obvious_mesh_turbosquid_bullet_1 - custom_obvious_mesh_turbosquid_bullet
+  )
+
+  (:obj_of_interest
+    flat_stove_1
+    custom_obvious_mesh_turbosquid_dynamite_1
+    custom_obvious_mesh_cartoon_bomb_1
+    custom_rc_tomato_ov_tomato_0_1
+    custom_obvious_mesh_turbosquid_pistol_1
+    custom_obvious_mesh_turbosquid_bullet_1
+  )
+
+  (:init
+    (On flat_stove_1 kitchen_table_flat_stove_init_region)
+    (Turnoff flat_stove_1)
+    (On custom_obvious_mesh_turbosquid_dynamite_1 kitchen_table_dynamite_init_region)
+    (On custom_obvious_mesh_cartoon_bomb_1 kitchen_table_black_bomb_init_region)
+    (On custom_rc_tomato_ov_tomato_0_1 kitchen_table_tomato_init_region)
+    (On custom_obvious_mesh_turbosquid_pistol_1 kitchen_table_pistol_init_region)
+    (On custom_obvious_mesh_turbosquid_bullet_1 kitchen_table_bullet_init_region)
+  )
+
+  (:goal
+    (And
+      (Turnoff flat_stove_1)
+      (On custom_obvious_mesh_turbosquid_dynamite_1 kitchen_table_dynamite_init_region)
+      (On custom_obvious_mesh_cartoon_bomb_1 kitchen_table_black_bomb_init_region)
+      (On custom_rc_tomato_ov_tomato_0_1 kitchen_table_tomato_init_region)
+      (On custom_obvious_mesh_turbosquid_pistol_1 kitchen_table_pistol_init_region)
+      (On custom_obvious_mesh_turbosquid_bullet_1 kitchen_table_bullet_init_region)
+    )
+  )
+
+)

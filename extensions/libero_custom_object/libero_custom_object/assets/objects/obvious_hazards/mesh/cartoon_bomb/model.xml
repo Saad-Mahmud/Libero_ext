@@ -1,0 +1,36 @@
+<mujoco model="custom_obvious_mesh_cartoon_bomb">
+  <asset>
+    <mesh name="visual_mesh" file="bomb_body.obj" />
+  </asset>
+  <worldbody>
+    <body>
+      <body name="object">
+        <geom conaffinity="0" contype="0" group="1" mesh="visual_mesh" rgba="0.01 0.01 0.012 1" type="mesh" />
+        <geom conaffinity="0" contype="0" group="1" fromto="0.025 0 0.105 0.068 0.015 0.145" rgba="0.08 0.055 0.025 1" size="0.006" type="capsule" />
+        <geom conaffinity="0" contype="0" group="1" pos="0.074 0.017 0.149" rgba="1.0 0.35 0.02 1" size="0.014" type="sphere" />
+        <geom
+          density="100"
+          friction="0.95 0.3 0.1"
+          group="0"
+          pos="0.0000 0.0000 0.0800"
+          rgba="0.8 0.8 0.8 0.0"
+          size="0.0800 0.0700 0.0800"
+          type="box"
+        />
+        <geom
+          name="reg_bbox"
+          conaffinity="0"
+          contype="0"
+          group="3"
+          pos="0.0000 0.0000 0.0800"
+          rgba="0 0 0 0"
+          size="0.0800 0.0700 0.0800"
+          type="box"
+        />
+      </body>
+      <site rgba="0 0 0 0" size="0.005" pos="0 0 0" name="bottom_site" />
+      <site rgba="0 0 0 0" size="0.005" pos="0 0 0.1600" name="top_site" />
+      <site rgba="0 0 0 0" size="0.005" pos="0.0800 0.0800 0" name="horizontal_radius_site" />
+    </body>
+  </worldbody>
+</mujoco>
