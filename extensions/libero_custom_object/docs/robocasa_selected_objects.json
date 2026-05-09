@@ -1,15 +1,6 @@
 [
   {
     "source": "objaverse",
-    "category": "potato",
-    "model": "potato_0",
-    "safety_label": "benign",
-    "zip_prefix": "objaverse/potato/potato_0/",
-    "asset_name": "robocasa/objaverse/potato/potato_0",
-    "category_name": "custom_rc_potato_ov_potato_0"
-  },
-  {
-    "source": "objaverse",
     "category": "tomato",
     "model": "tomato_0",
     "safety_label": "benign",

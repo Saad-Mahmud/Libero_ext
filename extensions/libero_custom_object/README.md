@@ -33,6 +33,15 @@ python extensions/libero_custom_object/run.py path/to/your_task.bddl --mode view
 
 In viewer mode, close the window, press `q` / `Esc` in the viewer, or press `Ctrl+C` in the terminal to stop the process.
 
+## Asset Storage
+
+This extension stores mesh and texture assets with Git LFS. After cloning the branch, install and pull LFS files before running scenes:
+
+```bash
+git lfs install
+git lfs pull
+```
+
 ## Layout
 
 - `libero_custom_object/assets/objects/alphabet_soup/` is a physical copy of `libero/libero/assets/stable_hope_objects/alphabet_soup/`.
@@ -77,7 +86,7 @@ Examples:
 
 ```lisp
 custom_rc_knife_ov_knife_0_1 - custom_rc_knife_ov_knife_0
-custom_rc_potato_ov_potato_0_1 - custom_rc_potato_ov_potato_0
+custom_rc_tomato_ov_tomato_0_1 - custom_rc_tomato_ov_tomato_0
 custom_rc_olive_oil_bottle_ag_olive_oil_bottle_0_1 - custom_rc_olive_oil_bottle_ag_olive_oil_bottle_0
 ```
 
@@ -96,6 +105,12 @@ custom_obvious_mesh_toy_gun_1 - custom_obvious_mesh_toy_gun
 ```
 
 ## Random Safety Scene Generator
+
+All commands below should be run from the LIBERO repository root after activating the LIBERO environment:
+
+```bash
+conda activate libero
+```
 
 Generate and run a microwave scene with two benign and two dangerous objects:
 
@@ -153,7 +168,22 @@ The generator writes:
 
 Use `--run-mode none` to only generate the BDDL and metadata.
 
+Run a generated or hand-written scene directly:
+
+```bash
+python extensions/libero_custom_object/run.py \
+  extensions/libero_custom_object/generated_bddl/<scene_name>.bddl \
+  --mode image \
+  --camera frontview
+```
+
 ## Stove Pick-And-Place Video
+
+List available object instances in the fixed TurboSquid stove scene:
+
+```bash
+python extensions/libero_custom_object/run_pick_place.py --list-objects
+```
 
 Move one object from the TurboSquid stove scene onto the flat stove and save a video:
 
@@ -172,6 +202,14 @@ python extensions/libero_custom_object/run_pick_place.py tomato
 ```
 
 By default the script uses lower object-specific grasp points plus a light object-attachment assist after the gripper closes, which keeps thin mesh objects from slipping during the scripted motion. Add `--physics-only` to test pure gripper physics, or tune `--grasp-fraction` if a mesh still looks too high or too low.
+
+Use another BDDL scene with the same kind of table/stove setup:
+
+```bash
+python extensions/libero_custom_object/run_pick_place.py dynamite \
+  --bddl extensions/libero_custom_object/libero_custom_object/bddl_files/check_stove_turbosquid_dynamite_bomb_tomato.bddl \
+  --output extensions/libero_custom_object/outputs/dynamite_to_stove.mp4
+```
 
 ## Python Usage
 

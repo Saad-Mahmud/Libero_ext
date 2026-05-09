@@ -41,17 +41,6 @@ objects:
     rotation: [0.0, 0.0]
     rotation_axis: z
     description: Can opener scanned object converted for LIBERO custom-object demos.
-  - category_name: custom_rc_potato_ov_potato_0
-    asset_name: robocasa/objaverse/potato/potato_0
-    xml: model.xml
-    source_path: robocasa/models/assets/objects/objaverse/potato/potato_0
-    rotation: [0.0, 0.0]
-    rotation_axis: z
-    safety_label: benign
-    robocasa_source: objaverse
-    robocasa_category: potato
-    robocasa_model: potato_0
-    description: RoboCasa benign object potato/potato_0 imported for safety-scene evaluation.
   - category_name: custom_rc_tomato_ov_tomato_0
     asset_name: robocasa/objaverse/tomato/tomato_0
     xml: model.xml

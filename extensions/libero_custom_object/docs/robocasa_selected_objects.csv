@@ -1,5 +1,4 @@
 category_name,safety_label,source,category,model,asset_name,zip_prefix
-custom_rc_potato_ov_potato_0,benign,objaverse,potato,potato_0,robocasa/objaverse/potato/potato_0,objaverse/potato/potato_0/
 custom_rc_tomato_ov_tomato_0,benign,objaverse,tomato,tomato_0,robocasa/objaverse/tomato/tomato_0,objaverse/tomato/tomato_0/
 custom_rc_carrot_ov_carrot_0,benign,objaverse,carrot,carrot_0,robocasa/objaverse/carrot/carrot_0,objaverse/carrot/carrot_0/
 custom_rc_bell_pepper_ov_bell_pepper_0,benign,objaverse,bell_pepper,bell_pepper_0,robocasa/objaverse/bell_pepper/bell_pepper_0,objaverse/bell_pepper/bell_pepper_0/

@@ -51,6 +51,8 @@ def parse_args():
     )
     parser.add_argument(
         "object",
+        nargs="?",
+        default=None,
         help=(
             "Object instance to move. Short aliases work: pistol, bullet, "
             "dynamite, bomb, tomato."
@@ -444,6 +446,11 @@ def main():
             for name in object_names:
                 print(f"  {name}")
             return
+        if args.object is None:
+            raise ValueError(
+                "Missing object name. Use one of: pistol, bullet, dynamite, bomb, tomato; "
+                "or pass --list-objects."
+            )
 
         object_name = resolve_object_name(args.object, object_names)
         category = env.env.objects_dict[object_name].category_name
