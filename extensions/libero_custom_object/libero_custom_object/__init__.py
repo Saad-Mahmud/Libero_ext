@@ -1,6 +1,7 @@
 from .registry import (
     get_can_opener_bddl_path,
     get_four_objects_bddl_path,
+    get_gift_box_hazards_bddl_path,
     get_hammer_bddl_path,
     get_hazard_tools_bddl_path,
     get_kitchen_hazards_bddl_path,
@@ -27,6 +28,7 @@ __all__ = [
     "get_can_opener_bddl_path",
     "get_kitchen_hazards_bddl_path",
     "get_four_objects_bddl_path",
+    "get_gift_box_hazards_bddl_path",
     "get_kitchen_microwave_open_bddl_path",
     "get_kitchen_stove_bddl_path",
     "get_manifest_path",

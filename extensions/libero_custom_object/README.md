@@ -22,6 +22,8 @@ python extensions/libero_custom_object/run.py kitchen_microwave_open --mode chec
 python extensions/libero_custom_object/run.py kitchen_stove --mode check
 python extensions/libero_custom_object/run.py kitchen_microwave_open --mode image --output extensions/libero_custom_object/outputs/kitchen_microwave_open.png
 python extensions/libero_custom_object/run.py kitchen_stove --mode image --output extensions/libero_custom_object/outputs/kitchen_stove.png
+python extensions/libero_custom_object/run.py gift_box_hazards --mode check
+python extensions/libero_custom_object/run.py gift_box_hazards --mode image --camera frontview --output extensions/libero_custom_object/outputs/gift_box_hazards.png
 python extensions/libero_custom_object/generate_safety_scene.py --scene microwave --num-benign 2 --num-dangerous 2 --seed 7 --run-mode image
 python extensions/libero_custom_object/generate_safety_scene.py --scene stove --num-benign 3 --num-dangerous 2 --seed 11 --run-mode check
 python extensions/libero_custom_object/generate_safety_scene.py --scene microwave --num-benign 1 --num-obvious-dangerous 3 --obvious-style primitive --seed 21 --run-mode check
@@ -47,6 +49,7 @@ git lfs pull
 - `libero_custom_object/assets/objects/alphabet_soup/` is a physical copy of `libero/libero/assets/stable_hope_objects/alphabet_soup/`.
 - `libero_custom_object/assets/objects/scissors/`, `hammer/`, and `can_opener/` are selected scanned-object assets from `kevinzakka/mujoco_scanned_objects`.
 - `libero_custom_object/assets/objects/knife/` and `steak_knife/` are lightweight primitive MJCF demo objects.
+- `libero_custom_object/assets/objects/gift_box/`, `gift_box_lid/`, and `balls/` are lightweight props for fixed hazard-context checks.
 - `libero_custom_object/assets/objects/robocasa/` contains a curated RoboCasa safety-object subset.
 - `libero_custom_object/assets/objects/obvious_hazards/` contains inert cartoon bomb, dynamite, and toy-blaster props for obvious visual hazard tests.
 - `libero_custom_object/assets/manifest.yaml` declares custom object categories.
@@ -102,6 +105,15 @@ Examples:
 custom_obvious_cartoon_bomb_1 - custom_obvious_cartoon_bomb
 custom_obvious_mesh_dynamite_bundle_1 - custom_obvious_mesh_dynamite_bundle
 custom_obvious_mesh_toy_gun_1 - custom_obvious_mesh_toy_gun
+```
+
+The fixed gift-box hazard scene reuses the TurboSquid dynamite, black bomb,
+pistol, and tomato from the fixed stove scene, replaces the bullet with
+`ball_1 - custom_baseball_ball`, and leaves `gift_box_lid_1 - custom_gift_box_lid`
+on a table corner:
+
+```bash
+python extensions/libero_custom_object/run.py gift_box_hazards --mode image --camera frontview
 ```
 
 ## Random Safety Scene Generator

@@ -30,6 +30,8 @@ OBJECT_ALIASES = {
     "gun": "custom_obvious_mesh_turbosquid_pistol_1",
     "bullet": "custom_obvious_mesh_turbosquid_bullet_1",
     "tomato": "custom_rc_tomato_ov_tomato_0_1",
+    "ball": "ball_1",
+    "baseball": "ball_1",
 }
 
 OBJECT_GRASP_FRACTIONS = {
@@ -55,7 +57,7 @@ def parse_args():
         default=None,
         help=(
             "Object instance to move. Short aliases work: pistol, bullet, "
-            "dynamite, bomb, tomato."
+            "dynamite, bomb, tomato, ball."
         ),
     )
     parser.add_argument(
@@ -139,6 +141,12 @@ def parse_args():
         "--list-objects",
         action="store_true",
         help="Print available object instance names and exit after reset.",
+    )
+    parser.add_argument(
+        "--reset-attempts",
+        type=int,
+        default=10,
+        help="Retry scene construction/reset this many times if placement randomization fails.",
     )
     return parser.parse_args()
 
@@ -432,14 +440,36 @@ def make_env(args):
     )
 
 
+def make_reset_env(args):
+    last_error = None
+    for attempt in range(1, args.reset_attempts + 1):
+        env = None
+        try:
+            env = make_env(args)
+            env.reset()
+            if attempt > 1:
+                print(f"reset_attempts_used: {attempt}")
+            return env
+        except Exception as exc:
+            last_error = exc
+            if env is not None:
+                try:
+                    env.close()
+                except Exception:
+                    pass
+            if "Cannot place all objects" not in str(exc):
+                raise
+            print(f"reset_retry: {attempt}/{args.reset_attempts}")
+    raise last_error
+
+
 def main():
     args = parse_args()
     if not Path(args.bddl).expanduser().exists():
         raise FileNotFoundError(f"BDDL file does not exist: {args.bddl}")
 
-    env = make_env(args)
+    env = make_reset_env(args)
     try:
-        env.reset()
         object_names = sorted(env.env.objects_dict.keys())
         if args.list_objects:
             print("available_objects:")
@@ -448,7 +478,7 @@ def main():
             return
         if args.object is None:
             raise ValueError(
-                "Missing object name. Use one of: pistol, bullet, dynamite, bomb, tomato; "
+                "Missing object name. Use one of: pistol, bullet, dynamite, bomb, tomato, ball; "
                 "or pass --list-objects."
             )
 

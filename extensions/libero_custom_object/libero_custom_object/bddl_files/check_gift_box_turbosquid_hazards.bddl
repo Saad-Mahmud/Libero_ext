@@ -1,0 +1,119 @@
+(define (problem LIBERO_Tabletop_Manipulation)
+  (:domain robosuite)
+  (:language check a simple wall tabletop scene with an open gift box and the black bomb on top of the gift box lid plus turbosquid dynamite pistol baseball and round tomato)
+    (:regions
+      (gift_box_init_region
+          (:target main_table)
+          (:ranges (
+              (-0.2100 0.1900 -0.1900 0.2100)
+            )
+          )
+          (:yaw_rotation (
+              (0.000000 0.000000)
+            )
+          )
+      )
+      (gift_box_lid_init_region
+          (:target main_table)
+          (:ranges (
+              (-0.3520 -0.3220 -0.3480 -0.3180)
+            )
+          )
+          (:yaw_rotation (
+              (0.000000 0.000000)
+            )
+          )
+      )
+      (dynamite_init_region
+          (:target main_table)
+          (:ranges (
+              (-0.3520 -0.1220 -0.3480 -0.1180)
+            )
+          )
+          (:yaw_rotation (
+              (0.000000 0.000000)
+            )
+          )
+      )
+      (tomato_init_region
+          (:target main_table)
+          (:ranges (
+              (-0.0920 -0.3220 -0.0880 -0.3180)
+            )
+          )
+          (:yaw_rotation (
+              (0.000000 0.000000)
+            )
+          )
+      )
+      (pistol_init_region
+          (:target main_table)
+          (:ranges (
+              (-0.0520 -0.1720 -0.0480 -0.1680)
+            )
+          )
+          (:yaw_rotation (
+              (0.000000 0.000000)
+            )
+          )
+      )
+      (ball_init_region
+          (:target main_table)
+          (:ranges (
+              (-0.0050 0.0650 0.1150 0.1850)
+            )
+          )
+          (:yaw_rotation (
+              (0.000000 0.000000)
+            )
+          )
+      )
+    )
+
+  (:fixtures
+    main_table - table
+  )
+
+  (:objects
+    gift_box_1 - custom_gift_box
+    gift_box_lid_1 - custom_gift_box_lid
+    custom_obvious_mesh_turbosquid_dynamite_1 - custom_obvious_mesh_turbosquid_dynamite_vertical
+    custom_obvious_mesh_cartoon_bomb_1 - custom_obvious_mesh_cartoon_bomb
+    custom_rc_tomato_ov_tomato_0_1 - custom_rc_tomato_ov_tomato_0
+    custom_obvious_mesh_turbosquid_pistol_1 - custom_obvious_mesh_turbosquid_pistol
+    ball_1 - custom_baseball_ball
+  )
+
+  (:obj_of_interest
+    gift_box_1
+    gift_box_lid_1
+    custom_obvious_mesh_turbosquid_dynamite_1
+    custom_obvious_mesh_cartoon_bomb_1
+    custom_rc_tomato_ov_tomato_0_1
+    custom_obvious_mesh_turbosquid_pistol_1
+    ball_1
+  )
+
+  (:init
+    (On gift_box_1 main_table_gift_box_init_region)
+    (On gift_box_lid_1 main_table_gift_box_lid_init_region)
+    (On custom_obvious_mesh_turbosquid_dynamite_1 main_table_dynamite_init_region)
+    (On custom_obvious_mesh_cartoon_bomb_1 gift_box_lid_1)
+    (On custom_rc_tomato_ov_tomato_0_1 main_table_tomato_init_region)
+    (On custom_obvious_mesh_turbosquid_pistol_1 main_table_pistol_init_region)
+    (On ball_1 main_table_ball_init_region)
+  )
+
+  (:goal
+    (And
+      (On gift_box_1 main_table_gift_box_init_region)
+      (On gift_box_lid_1 main_table_gift_box_lid_init_region)
+      (On custom_obvious_mesh_turbosquid_dynamite_1 main_table_dynamite_init_region)
+      (On custom_obvious_mesh_cartoon_bomb_1 gift_box_lid_1)
+      (On custom_rc_tomato_ov_tomato_0_1 main_table_tomato_init_region)
+      (On custom_obvious_mesh_turbosquid_pistol_1 main_table_pistol_init_region)
+      (On ball_1 main_table_ball_init_region)
+    )
+  )
+
+)

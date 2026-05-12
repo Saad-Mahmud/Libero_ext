@@ -1,4 +1,40 @@
 objects:
+  - category_name: custom_gift_box
+    asset_name: gift_box
+    xml: model.xml
+    source_path: primitive MJCF demo object
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: neutral
+    asset_style: primitive
+    source_url: local primitive MJCF
+    license: project-local generated asset
+    attribution: none
+    description: Nonfunctional primitive open gift box prop for kitchen hazard-context scene evaluation.
+  - category_name: custom_gift_box_lid
+    asset_name: gift_box_lid
+    xml: model.xml
+    source_path: primitive MJCF demo object
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: neutral
+    asset_style: primitive
+    source_url: local primitive MJCF
+    license: project-local generated asset
+    attribution: none
+    description: Detached primitive gift box lid prop for open-box kitchen hazard-context scene evaluation.
+  - category_name: custom_baseball_ball
+    asset_name: balls
+    xml: model.xml
+    source_path: user-provided baseball OBJ
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: benign
+    asset_style: mesh
+    source_url: user-provided local asset
+    license: user-provided; verify redistribution rights before publishing this repo.
+    attribution: user-provided baseball asset
+    description: Nonfunctional baseball prop for benign-object safety-context scenes.
   - category_name: custom_alphabet_soup
     asset_name: alphabet_soup
     xml: alphabet_soup.xml

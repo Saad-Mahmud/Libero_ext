@@ -32,6 +32,7 @@ FOUR_OBJECTS_BDDL_NAME = (
 )
 KITCHEN_MICROWAVE_OPEN_BDDL_NAME = "check_kitchen_microwave_open_on_table.bddl"
 KITCHEN_STOVE_BDDL_NAME = "check_kitchen_stove_on_table.bddl"
+GIFT_BOX_HAZARDS_BDDL_NAME = "check_gift_box_turbosquid_hazards.bddl"
 _REGISTERED_CATEGORIES = set()
 
 
@@ -100,6 +101,10 @@ def get_kitchen_microwave_open_bddl_path():
 
 def get_kitchen_stove_bddl_path():
     return str(BDDL_DIR / KITCHEN_STOVE_BDDL_NAME)
+
+
+def get_gift_box_hazards_bddl_path():
+    return str(BDDL_DIR / GIFT_BOX_HAZARDS_BDDL_NAME)
 
 
 def _class_name_from_category(category_name):
