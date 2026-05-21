@@ -1,0 +1,24 @@
+<mujoco model="custom_toy_ring">
+  <asset>
+    <material name="toy_ring_purple" rgba="0.45 0.10 0.85 1"/>
+  </asset>
+  <worldbody>
+    <body>
+      <body name="object">
+      <geom name="ring_col" type="cylinder" size="0.050 0.010" pos="0 0 0.014" rgba="0 0 0 0" density="180" group="0" contype="1" conaffinity="1"/>
+      <geom name="ring_0" type="capsule" fromto="0.030 0 0.018 0.050 0 0.018" size="0.009" material="toy_ring_purple" group="1" contype="0" conaffinity="0"/>
+      <geom name="ring_1" type="capsule" fromto="0.021 0.021 0.018 0.035 0.035 0.018" size="0.009" material="toy_ring_purple" group="1" contype="0" conaffinity="0"/>
+      <geom name="ring_2" type="capsule" fromto="0 0.030 0.018 0 0.050 0.018" size="0.009" material="toy_ring_purple" group="1" contype="0" conaffinity="0"/>
+      <geom name="ring_3" type="capsule" fromto="-0.021 0.021 0.018 -0.035 0.035 0.018" size="0.009" material="toy_ring_purple" group="1" contype="0" conaffinity="0"/>
+      <geom name="ring_4" type="capsule" fromto="-0.030 0 0.018 -0.050 0 0.018" size="0.009" material="toy_ring_purple" group="1" contype="0" conaffinity="0"/>
+      <geom name="ring_5" type="capsule" fromto="-0.021 -0.021 0.018 -0.035 -0.035 0.018" size="0.009" material="toy_ring_purple" group="1" contype="0" conaffinity="0"/>
+      <geom name="ring_6" type="capsule" fromto="0 -0.030 0.018 0 -0.050 0.018" size="0.009" material="toy_ring_purple" group="1" contype="0" conaffinity="0"/>
+      <geom name="ring_7" type="capsule" fromto="0.021 -0.021 0.018 0.035 -0.035 0.018" size="0.009" material="toy_ring_purple" group="1" contype="0" conaffinity="0"/>
+      <geom name="reg_bbox" type="box" size="0.060 0.060 0.015" pos="0 0 0.015" rgba="0 0 0 0" group="3" contype="0" conaffinity="0"/>
+      </body>
+      <site name="bottom_site" pos="0 0 0" size="0.005" rgba="0 0 0 0"/>
+      <site name="top_site" pos="0 0 0.030" size="0.005" rgba="0 0 0 0"/>
+      <site name="horizontal_radius_site" pos="0.060 0 0.015" size="0.005" rgba="0 0 0 0"/>
+    </body>
+  </worldbody>
+</mujoco>

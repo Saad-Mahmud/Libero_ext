@@ -1,0 +1,23 @@
+<mujoco model="custom_toy_drum">
+  <asset>
+    <material name="toy_drum_yellow" rgba="0.95 0.74 0.08 1"/>
+    <material name="toy_drum_blue" rgba="0.03 0.18 0.68 1"/>
+    <material name="toy_drum_red" rgba="0.85 0.05 0.05 1"/>
+  </asset>
+  <worldbody>
+    <body>
+      <body name="object">
+        <geom name="drum_col" type="cylinder" size="0.042 0.032" pos="0 0 0.032" rgba="0 0 0 0" density="220" group="0" contype="1" conaffinity="1"/>
+        <geom name="drum_body" type="cylinder" size="0.040 0.030" pos="0 0 0.032" material="toy_drum_yellow" group="1" contype="0" conaffinity="0"/>
+        <geom name="top_rim" type="cylinder" size="0.043 0.004" pos="0 0 0.066" material="toy_drum_blue" group="1" contype="0" conaffinity="0"/>
+        <geom name="bottom_rim" type="cylinder" size="0.043 0.004" pos="0 0 0.002" material="toy_drum_blue" group="1" contype="0" conaffinity="0"/>
+        <geom name="stripe_1" type="box" size="0.006 0.043 0.027" pos="0.023 0 0.032" material="toy_drum_red" group="1" contype="0" conaffinity="0"/>
+        <geom name="stripe_2" type="box" size="0.006 0.043 0.027" pos="-0.023 0 0.032" material="toy_drum_red" group="1" contype="0" conaffinity="0"/>
+        <geom name="reg_bbox" type="box" size="0.050 0.050 0.036" pos="0 0 0.036" rgba="0 0 0 0" group="3" contype="0" conaffinity="0"/>
+      </body>
+      <site name="bottom_site" pos="0 0 0" size="0.005" rgba="0 0 0 0"/>
+      <site name="top_site" pos="0 0 0.072" size="0.005" rgba="0 0 0 0"/>
+      <site name="horizontal_radius_site" pos="0.055 0 0.036" size="0.005" rgba="0 0 0 0"/>
+    </body>
+  </worldbody>
+</mujoco>

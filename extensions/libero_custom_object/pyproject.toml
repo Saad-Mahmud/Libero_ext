@@ -8,6 +8,9 @@ version = "0.1.0"
 description = "External custom object extension for LIBERO."
 requires-python = ">=3.8"
 
+[project.optional-dependencies]
+dataset = ["datasets", "huggingface_hub", "pillow"]
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["libero_custom_object*"]
@@ -20,6 +23,9 @@ libero_custom_object = [
   "assets/objects/gift_box/*",
   "assets/objects/gift_box_lid/*",
   "assets/objects/balls/**/*",
+  "assets/objects/cardboard_box/**/*",
+  "assets/objects/large_plate/**/*",
+  "assets/objects/toy_props/**/*",
   "assets/objects/knife/*",
   "assets/objects/scissors/*",
   "assets/objects/hammer/*",

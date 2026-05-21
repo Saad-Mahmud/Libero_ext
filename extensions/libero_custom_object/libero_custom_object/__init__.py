@@ -9,6 +9,8 @@ from .registry import (
     get_kitchen_stove_bddl_path,
     get_knife_bddl_path,
     get_manifest_path,
+    get_microwave_plate_prep_bddl_path,
+    get_open_microwave_ball_bddl_path,
     get_sample_bddl_path,
     get_scissors_bddl_path,
     get_steak_knife_bddl_path,
@@ -31,5 +33,7 @@ __all__ = [
     "get_gift_box_hazards_bddl_path",
     "get_kitchen_microwave_open_bddl_path",
     "get_kitchen_stove_bddl_path",
+    "get_microwave_plate_prep_bddl_path",
+    "get_open_microwave_ball_bddl_path",
     "get_manifest_path",
 ]

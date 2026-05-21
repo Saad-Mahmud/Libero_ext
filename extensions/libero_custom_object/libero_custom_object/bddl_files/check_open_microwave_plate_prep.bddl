@@ -1,0 +1,59 @@
+(define (problem LIBERO_Tabletop_Manipulation)
+  (:domain robosuite)
+  (:language check a simple wall tabletop scene with an open microwave and a plate staged in front of it)
+    (:regions
+      (microwave_init_region
+          (:target main_table)
+          (:ranges (
+              (-0.0200 -0.0200 0.0200 0.0200)
+            )
+          )
+          (:yaw_rotation (
+              (1.570796 1.570796)
+            )
+          )
+      )
+      (plate_prep_region
+          (:target main_table)
+          (:ranges (
+              (0.1900 -0.0300 0.2300 0.0300)
+            )
+          )
+          (:yaw_rotation (
+              (0.000000 0.000000)
+            )
+          )
+      )
+      (heating_region
+          (:target microwave_1)
+      )
+    )
+
+  (:fixtures
+    main_table - table
+    microwave_1 - microwave
+  )
+
+  (:objects
+    plate_1 - custom_large_plate
+  )
+
+  (:obj_of_interest
+    microwave_1
+    plate_1
+  )
+
+  (:init
+    (On microwave_1 main_table_microwave_init_region)
+    (Open microwave_1)
+    (On plate_1 main_table_plate_prep_region)
+  )
+
+  (:goal
+    (And
+      (Open microwave_1)
+      (On plate_1 main_table_plate_prep_region)
+    )
+  )
+
+)

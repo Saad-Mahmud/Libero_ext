@@ -47,7 +47,7 @@ OBJECT_GRASP_FRACTIONS = {
 def parse_args():
     parser = argparse.ArgumentParser(
         description=(
-            "Script a Panda pick-and-place motion in the TurboSquid stove scene "
+            "Script a Panda pick-and-place motion in a LIBERO custom-object scene "
             "and save the rollout as a video."
         )
     )
@@ -68,7 +68,7 @@ def parse_args():
     parser.add_argument(
         "--output",
         default=None,
-        help="Output video path. Defaults to outputs/pick_place_<object>_to_stove.mp4.",
+        help="Output video path. Defaults to outputs/pick_place_<object>_to_<target>.mp4.",
     )
     parser.add_argument("--camera", default="frontview")
     parser.add_argument("--width", type=int, default=512)
@@ -80,7 +80,36 @@ def parse_args():
     parser.add_argument(
         "--target-site",
         default="flat_stove_1_burner",
-        help="MuJoCo site used as the stove placement target.",
+        help="MuJoCo site used as the placement target.",
+    )
+    parser.add_argument(
+        "--placement-mode",
+        choices=["surface", "center"],
+        default="surface",
+        help=(
+            "surface places the object bottom at the target site; center places "
+            "the object center at the target site, which is useful for inside-volume targets."
+        ),
+    )
+    parser.add_argument(
+        "--target-offset",
+        default="0 0 0",
+        help="World xyz offset added to the target site position before placing.",
+    )
+    parser.add_argument(
+        "--approach-from-site-axis",
+        choices=["none", "local_x", "local_neg_x", "local_y", "local_neg_y"],
+        default="none",
+        help=(
+            "Optional local target-site axis used to approach the placement target "
+            "horizontally before insertion."
+        ),
+    )
+    parser.add_argument(
+        "--target-approach-distance",
+        type=float,
+        default=0.0,
+        help="Meters away from the target site to start the final horizontal insertion.",
     )
     parser.add_argument(
         "--transport-z",
@@ -113,7 +142,7 @@ def parse_args():
         "--place-clearance",
         type=float,
         default=0.003,
-        help="Small z clearance above the stove target surface when releasing.",
+        help="Small z clearance above the target when releasing.",
     )
     parser.add_argument("--pos-gain", type=float, default=8.0)
     parser.add_argument("--pos-tol", type=float, default=0.008)
@@ -158,7 +187,11 @@ def sanitize_filename(value):
 def output_path_for(args, object_name):
     if args.output:
         return Path(args.output).expanduser().resolve()
-    filename = f"pick_place_{sanitize_filename(object_name)}_to_stove.mp4"
+    if args.target_site == "flat_stove_1_burner":
+        target_label = "stove"
+    else:
+        target_label = sanitize_filename(args.target_site)
+    filename = f"pick_place_{sanitize_filename(object_name)}_to_{target_label}.mp4"
     return (DEFAULT_OUTPUT_DIR / filename).resolve()
 
 
@@ -320,6 +353,38 @@ class PickPlaceController:
         site_id = self.base_env.sim.model.site_name2id(site_name)
         return self.base_env.sim.data.site_xpos[site_id].copy()
 
+    def site_xmat(self, site_name):
+        site_id = self.base_env.sim.model.site_name2id(site_name)
+        return self.base_env.sim.data.site_xmat[site_id].reshape(3, 3).copy()
+
+    def target_pos(self):
+        return self.site_pos(self.args.target_site) + parse_vec3(
+            self.args.target_offset, [0, 0, 0]
+        )
+
+    def target_approach_pos(self, target):
+        if (
+            self.args.approach_from_site_axis == "none"
+            or self.args.target_approach_distance <= 0
+        ):
+            return target.copy()
+
+        axes = {
+            "local_x": np.array([1.0, 0.0, 0.0]),
+            "local_neg_x": np.array([-1.0, 0.0, 0.0]),
+            "local_y": np.array([0.0, 1.0, 0.0]),
+            "local_neg_y": np.array([0.0, -1.0, 0.0]),
+        }
+        axis = self.site_xmat(self.args.target_site) @ axes[
+            self.args.approach_from_site_axis
+        ]
+        axis[2] = 0.0
+        norm = np.linalg.norm(axis)
+        if norm < 1e-6:
+            return target.copy()
+        axis /= norm
+        return target + axis * self.args.target_approach_distance
+
     def set_object_pose(self, pos, quat=None):
         obj = self.base_env.objects_dict[self.object_name]
         joint = obj.joints[-1]
@@ -372,9 +437,14 @@ class PickPlaceController:
         self.attach_quat = self.object_quat()
         self.attached = True
 
-    def release_on_stove(self, target_site):
-        target = self.site_pos(target_site)
-        body_z = target[2] - self.shape["bottom_z"] + self.args.place_clearance
+    def target_body_z(self, target):
+        if self.args.placement_mode == "center":
+            object_center_z = (self.shape["bottom_z"] + self.shape["top_z"]) / 2.0
+            return target[2] - object_center_z + self.args.place_clearance
+        return target[2] - self.shape["bottom_z"] + self.args.place_clearance
+
+    def release_on_target(self, target):
+        body_z = self.target_body_z(target)
         self.set_object_pose([target[0], target[1], body_z], self.attach_quat)
         self.attached = False
 
@@ -388,7 +458,8 @@ class PickPlaceController:
         grasp_z = bottom_z + np.clip(grasp_fraction, 0.05, 0.95) * height
         approach_z = max(self.args.transport_z, top_z + self.args.approach_clearance)
         object_xy = obj_pos[:2]
-        target = self.site_pos(self.args.target_site)
+        target = self.target_pos()
+        approach_target = self.target_approach_pos(target)
 
         self.recorder.append(force=True)
         self.hold(gripper=-1.0, steps=20)
@@ -404,17 +475,29 @@ class PickPlaceController:
             self.attach_object()
 
         self.servo_to([object_xy[0], object_xy[1], self.args.transport_z], gripper=1.0)
-        self.servo_to([target[0], target[1], self.args.transport_z], gripper=1.0)
+        self.servo_to(
+            [approach_target[0], approach_target[1], self.args.transport_z],
+            gripper=1.0,
+        )
 
-        release_body_z = target[2] - self.shape["bottom_z"] + self.args.place_clearance
-        release_eef_z = release_body_z - self.attach_offset[2] if self.attached else target[2] + 0.05
+        release_body_z = self.target_body_z(target)
+        release_eef_z = (
+            release_body_z - self.attach_offset[2] if self.attached else target[2] + 0.05
+        )
+        self.servo_to(
+            [approach_target[0], approach_target[1], release_eef_z],
+            gripper=1.0,
+        )
         self.servo_to([target[0], target[1], release_eef_z], gripper=1.0)
 
         if self.attached:
-            self.release_on_stove(self.args.target_site)
+            self.release_on_target(target)
 
         self.hold(gripper=-1.0, steps=35)
-        self.servo_to([target[0], target[1], self.args.transport_z], gripper=-1.0)
+        self.servo_to(
+            [approach_target[0], approach_target[1], self.args.transport_z],
+            gripper=-1.0,
+        )
         self.hold(gripper=-1.0, steps=20)
         self.recorder.append(force=True)
 
@@ -461,6 +544,20 @@ def make_reset_env(args):
                 raise
             print(f"reset_retry: {attempt}/{args.reset_attempts}")
     raise last_error
+
+
+def object_inside_site(base_env, object_name, site_name):
+    site_id = base_env.sim.model.site_name2id(site_name)
+    site_pos = base_env.sim.data.site_xpos[site_id]
+    site_mat = base_env.sim.data.site_xmat[site_id].reshape(3, 3)
+    site_size = base_env.sim.model.site_size[site_id]
+    object_pos = base_env.sim.data.body_xpos[base_env.obj_body_id[object_name]]
+
+    total_size = np.abs(site_mat @ site_size)
+    lower = site_pos - total_size
+    upper = site_pos + total_size
+    lower[2] -= 0.01
+    return bool(np.all(object_pos > lower) and np.all(object_pos < upper))
 
 
 def main():
@@ -515,6 +612,9 @@ def main():
         final_pos = env.env.sim.data.body_xpos[env.env.obj_body_id[object_name]].copy()
         print(f"moved_object: {object_name}")
         print(f"final_position: {final_pos.tolist()}")
+        print(
+            f"inside_target_site: {object_inside_site(env.env, object_name, args.target_site)}"
+        )
         print(f"saved_video: {output_path}")
         if not args.physics_only:
             print("mode: assisted_pick_place")

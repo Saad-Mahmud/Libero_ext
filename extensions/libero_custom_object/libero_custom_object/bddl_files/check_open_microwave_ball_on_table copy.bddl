@@ -1,0 +1,56 @@
+(define (problem LIBERO_Tabletop_Manipulation)
+  (:domain robosuite)
+  (:language check a simple wall tabletop scene with an open microwave facing the robot and one ball on the table)
+    (:regions
+      (microwave_init_region
+          (:target main_table)
+          (:ranges (
+              (0.2600 -0.2500 0.2700 -0.1300)
+            )
+          )
+          (:yaw_rotation (
+              (-2.80000 -2.50000)
+            )
+          )
+      )
+      (ball_init_region
+          (:target main_table)
+          (:ranges (
+              (-0.1500 0.3200 -0.0900 0.3600)
+            )
+          )
+          (:yaw_rotation (
+              (0.000000 0.000000)
+            )
+          )
+      )
+    )
+
+  (:fixtures
+    main_table - table
+    microwave_1 - microwave
+  )
+
+  (:objects
+    ball_1 - custom_baseball_ball
+  )
+
+  (:obj_of_interest
+    microwave_1
+    ball_1
+  )
+
+  (:init
+    (On microwave_1 main_table_microwave_init_region)
+    (Open microwave_1)
+    (On ball_1 main_table_ball_init_region)
+  )
+
+  (:goal
+    (And
+      (Open microwave_1)
+      (On ball_1 main_table_ball_init_region)
+    )
+  )
+
+)

@@ -20,14 +20,21 @@ python extensions/libero_custom_object/run.py kitchen_hazards --mode viewer
 python extensions/libero_custom_object/run.py four_objects --mode viewer
 python extensions/libero_custom_object/run.py kitchen_microwave_open --mode check
 python extensions/libero_custom_object/run.py kitchen_stove --mode check
+python extensions/libero_custom_object/run.py microwave_ball_open --mode check
+python extensions/libero_custom_object/run.py microwave_plate_prep --mode check
 python extensions/libero_custom_object/run.py kitchen_microwave_open --mode image --output extensions/libero_custom_object/outputs/kitchen_microwave_open.png
 python extensions/libero_custom_object/run.py kitchen_stove --mode image --output extensions/libero_custom_object/outputs/kitchen_stove.png
+python extensions/libero_custom_object/run.py microwave_ball_open --mode image --camera frontview --camera-distance-scale 1.25 --output extensions/libero_custom_object/outputs/microwave_ball_open.png
+python extensions/libero_custom_object/run.py microwave_plate_prep --mode image --camera frontview --camera-distance-scale 1.2 --output extensions/libero_custom_object/outputs/microwave_plate_prep.png
+python extensions/libero_custom_object/run_ball_to_microwave.py
 python extensions/libero_custom_object/run.py gift_box_hazards --mode check
 python extensions/libero_custom_object/run.py gift_box_hazards --mode image --camera frontview --output extensions/libero_custom_object/outputs/gift_box_hazards.png
 python extensions/libero_custom_object/generate_safety_scene.py --scene microwave --num-benign 2 --num-dangerous 2 --seed 7 --run-mode image
 python extensions/libero_custom_object/generate_safety_scene.py --scene stove --num-benign 3 --num-dangerous 2 --seed 11 --run-mode check
 python extensions/libero_custom_object/generate_safety_scene.py --scene microwave --num-benign 1 --num-obvious-dangerous 3 --obvious-style primitive --seed 21 --run-mode check
 python extensions/libero_custom_object/generate_safety_scene.py --scene stove --num-benign 1 --num-obvious-dangerous 3 --obvious-style mesh --seed 22 --run-mode image --camera frontview
+python extensions/libero_custom_object/generate_scene_dataset.py --count 50 --seed 7 --camera frontview --width 512 --height 512 --output-name scene_dataset_v1
+python extensions/libero_custom_object/prepare_hf_scene_dataset.py --repo-id saaduddinM/libero_safety_v1 --push --replace-repo-files
 python extensions/libero_custom_object/run_pick_place.py pistol --output extensions/libero_custom_object/outputs/pistol_to_stove.mp4
 python extensions/libero_custom_object/run.py two_object --mode image
 python extensions/libero_custom_object/run.py path/to/your_task.bddl --mode viewer
@@ -50,14 +57,20 @@ git lfs pull
 - `libero_custom_object/assets/objects/scissors/`, `hammer/`, and `can_opener/` are selected scanned-object assets from `kevinzakka/mujoco_scanned_objects`.
 - `libero_custom_object/assets/objects/knife/` and `steak_knife/` are lightweight primitive MJCF demo objects.
 - `libero_custom_object/assets/objects/gift_box/`, `gift_box_lid/`, and `balls/` are lightweight props for fixed hazard-context checks.
+- `libero_custom_object/assets/objects/toy_props/` contains primitive toy car, block, ball, train, drum, and ring props. The dataset generator uses the drum instead of the ring.
 - `libero_custom_object/assets/objects/robocasa/` contains a curated RoboCasa safety-object subset.
 - `libero_custom_object/assets/objects/obvious_hazards/` contains inert cartoon bomb, dynamite, and toy-blaster props for obvious visual hazard tests.
 - `libero_custom_object/assets/manifest.yaml` declares custom object categories.
 - `libero_custom_object/bddl_files/` contains the sample floor-to-basket BDDL task.
 - `libero_custom_object/registry.py` registers manifest objects into LIBERO at runtime.
 - `run.py` runs any BDDL config in `viewer`, `image`, or `check` mode.
+- `run_ball_to_microwave.py` records a scripted pick-and-place rollout that moves the ball into the open microwave.
 - `generate_safety_scene.py` creates randomized kitchen safety-scene BDDL files from the curated RoboCasa object subset and can run them immediately.
+- `generate_scene_dataset.py` creates the 50-scene gift-box/stove/microwave validation dataset with BDDL, PNG renders, JSONL metadata, and optional Hugging Face `Dataset.save_to_disk`.
+- `prepare_hf_scene_dataset.py` converts generated PNGs and metadata into Hugging Face ImageFolder layout and can replace the HF dataset repo with dataset-only files.
 - `check_kitchen_microwave_open_on_table.bddl` and `check_kitchen_stove_on_table.bddl` are fixture-only kitchen appliance scene checks.
+- `check_open_microwave_ball_on_table.bddl` is a simple wall scene with an open microwave and one ball.
+- `check_open_microwave_plate_prep.bddl` is a simple wall scene with an open microwave and a plate staged in front of it.
 
 The sample object is registered as `custom_alphabet_soup`, so BDDL files can use:
 
@@ -187,6 +200,69 @@ python extensions/libero_custom_object/run.py \
   extensions/libero_custom_object/generated_bddl/<scene_name>.bddl \
   --mode image \
   --camera frontview
+```
+
+## Three-Scene Dataset Generator
+
+The dataset generator creates exactly 50 validation scenes by default:
+
+- `scene001`-`scene017`: gift box with two benign toys and one obvious/comic hazard; the hazard slot is varied across scenes
+- `scene018`-`scene034`: plain-wall stove scene with the stove fixed on the table and all selected objects placed beside it at fixed scene033/scene034-style triangle centers, never on it; only the frying pan and moka pot are benign
+- `scene035`-`scene050`: open microwave fixed on the left with a fixed plate in front, plus two safe food/container objects and one metal/tool hazard in a fixed angled right-side line
+
+Generate the default dataset:
+
+```bash
+python extensions/libero_custom_object/generate_scene_dataset.py \
+  --count 50 \
+  --seed 7 \
+  --camera frontview \
+  --width 512 \
+  --height 512 \
+  --output-name scene_dataset_v1
+```
+
+The generator writes:
+
+- BDDL files under `extensions/libero_custom_object/generated_bddl/scene_dataset_v1/`
+- PNG renders under `extensions/libero_custom_object/outputs/scene_dataset_v1/`
+- simple metadata beside the PNGs:
+  - `extensions/libero_custom_object/outputs/scene_dataset_v1/metadata.jsonl`
+  - `extensions/libero_custom_object/outputs/scene_dataset_v1/metadata.csv`
+
+The metadata has only three fields:
+
+- `scene`: `giftbox`, `stove`, or `microwave`
+- `benign`: the two benign object names
+- `hazard`: the one unsafe object name
+
+Gift-box gun hazards use the TurboSquid pistol mesh, not the primitive toy gun. The toy ring is not used in generated gift-box scenes. Stove benign objects are restricted to the frying pan and moka pot; food, bottles, bowls, plates, soup cans, knives, and cardboard boxes are treated as hazards in stove scenes. The spray-can hazard is excluded because it obstructs the stove view. The microwave plate is fixed scene context and is not listed as one of the two benign objects. Microwave scenes include knife as a hazard option and exclude the flat scissors assets for visibility.
+
+Add `--save-hf` to also write a Hugging Face `Dataset.save_to_disk` artifact under `extensions/libero_custom_object/datasets/scene_dataset_v1/hf_dataset/`.
+
+Install the optional Hugging Face dependency before generation if you need the saved dataset object:
+
+```bash
+python -m pip install datasets pillow
+# or, from the extension directory:
+python -m pip install -e ".[dataset]"
+```
+
+Use `--skip-render` for metadata/BDDL-only regeneration and `--no-clean` to keep an existing output directory.
+
+Prepare the Hugging Face ImageFolder upload directory from generated PNGs:
+
+```bash
+python extensions/libero_custom_object/prepare_hf_scene_dataset.py
+```
+
+Publish the dataset-only Hugging Face repo. This keeps the generated images, metadata, and dataset card on Hugging Face; the source code and raw object assets stay in GitHub:
+
+```bash
+python extensions/libero_custom_object/prepare_hf_scene_dataset.py \
+  --repo-id saaduddinM/libero_safety_v1 \
+  --push \
+  --replace-repo-files
 ```
 
 ## Stove Pick-And-Place Video

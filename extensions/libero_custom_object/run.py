@@ -13,6 +13,8 @@ from libero_custom_object import (
     get_kitchen_microwave_open_bddl_path,
     get_kitchen_stove_bddl_path,
     get_knife_bddl_path,
+    get_microwave_plate_prep_bddl_path,
+    get_open_microwave_ball_bddl_path,
     get_sample_bddl_path,
     get_scissors_bddl_path,
     get_steak_knife_bddl_path,
@@ -43,6 +45,12 @@ BDDL_ALIASES = {
     "gift_box_hazards": get_gift_box_hazards_bddl_path,
     "gift_hazards": get_gift_box_hazards_bddl_path,
     "hazards_gift_box": get_gift_box_hazards_bddl_path,
+    "microwave_ball_open": get_open_microwave_ball_bddl_path,
+    "open_microwave_ball": get_open_microwave_ball_bddl_path,
+    "microwave_ball": get_open_microwave_ball_bddl_path,
+    "microwave_plate_prep": get_microwave_plate_prep_bddl_path,
+    "plate_microwave_prep": get_microwave_plate_prep_bddl_path,
+    "microwave_plate": get_microwave_plate_prep_bddl_path,
 }
 
 
@@ -65,7 +73,7 @@ def parse_args():
             "Path to a .bddl file, or one of: sample, one_object, two_object, "
             "knife, scissors, hammer, hazards, steak_knife, can_opener, "
             "kitchen_hazards, four_objects, kitchen_microwave_open, kitchen_stove, "
-            "gift_box_hazards"
+            "gift_box_hazards, microwave_ball_open, microwave_plate_prep"
         ),
     )
     parser.add_argument(
@@ -79,6 +87,12 @@ def parse_args():
     parser.add_argument("--control-freq", type=int, default=20)
     parser.add_argument("--width", type=int, default=512)
     parser.add_argument("--height", type=int, default=512)
+    parser.add_argument(
+        "--camera-distance-scale",
+        type=float,
+        default=1.0,
+        help="For --mode image, scale the fixed camera x/y position away from the scene origin.",
+    )
     parser.add_argument(
         "--output",
         default=str(Path(__file__).resolve().parent / "outputs" / "scene.png"),
@@ -188,10 +202,14 @@ def run_image(args, bddl_file, problem_info):
 
     env = make_offscreen_env(args, bddl_file, use_camera_obs=True)
     obs = env.reset()
+    camera = args.camera or "agentview"
+    if args.camera_distance_scale != 1.0:
+        camera_id = env.sim.model.camera_name2id(camera)
+        env.sim.model.cam_pos[camera_id][:2] *= args.camera_distance_scale
+        env.sim.forward()
     for _ in range(5):
         obs, _, _, _ = env.step([0.0] * 7)
 
-    camera = args.camera or "agentview"
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     imageio.imwrite(output, np.flipud(obs[f"{camera}_image"]))

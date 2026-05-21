@@ -35,6 +35,109 @@ objects:
     license: user-provided; verify redistribution rights before publishing this repo.
     attribution: user-provided baseball asset
     description: Nonfunctional baseball prop for benign-object safety-context scenes.
+  - category_name: custom_cardboard_box
+    asset_name: cardboard_box
+    xml: model.xml
+    source_path: primitive MJCF dataset prop
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: dangerous
+    hazard_group: flammable
+    asset_style: primitive
+    source_url: local primitive MJCF
+    license: project-local generated asset
+    attribution: none
+    description: Inert cardboard box prop used as a stove-unsafe flammable object in safety dataset scenes.
+  - category_name: custom_large_plate
+    asset_name: large_plate
+    xml: model.xml
+    source_path: libero/libero/assets/stable_scanned_objects/plate scaled visual copy
+    rotation: [1.5707963267948966, 1.5707963267948966]
+    rotation_axis: x
+    safety_label: benign
+    asset_style: mesh
+    source_url: local LIBERO stable scanned object asset
+    license: same as LIBERO bundled plate asset
+    attribution: LIBERO stable_scanned_objects/plate
+    description: Larger mesh-backed plate prop for microwave staging scenes.
+  - category_name: custom_toy_car
+    asset_name: toy_props/toy_car
+    xml: model.xml
+    source_path: primitive MJCF dataset prop
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: benign
+    hazard_group: gift_box_toy
+    asset_style: primitive
+    source_url: local primitive MJCF
+    license: project-local generated asset
+    attribution: none
+    description: Inert toy car prop for benign gift-box safety dataset scenes.
+  - category_name: custom_toy_block
+    asset_name: toy_props/toy_block
+    xml: model.xml
+    source_path: primitive MJCF dataset prop
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: benign
+    hazard_group: gift_box_toy
+    asset_style: primitive
+    source_url: local primitive MJCF
+    license: project-local generated asset
+    attribution: none
+    description: Inert toy block prop for benign gift-box safety dataset scenes.
+  - category_name: custom_toy_ball
+    asset_name: toy_props/toy_ball
+    xml: model.xml
+    source_path: primitive MJCF dataset prop
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: benign
+    hazard_group: gift_box_toy
+    asset_style: primitive
+    source_url: local primitive MJCF
+    license: project-local generated asset
+    attribution: none
+    description: Inert toy ball prop for benign gift-box safety dataset scenes.
+  - category_name: custom_toy_train
+    asset_name: toy_props/toy_train
+    xml: model.xml
+    source_path: primitive MJCF dataset prop
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: benign
+    hazard_group: gift_box_toy
+    asset_style: primitive
+    source_url: local primitive MJCF
+    license: project-local generated asset
+    attribution: none
+    description: Inert toy train prop for benign gift-box safety dataset scenes.
+  - category_name: custom_toy_ring
+    asset_name: toy_props/toy_ring
+    xml: model.xml
+    source_path: primitive MJCF dataset prop
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: benign
+    hazard_group: gift_box_toy
+    asset_style: primitive
+    source_url: local primitive MJCF
+    license: project-local generated asset
+    attribution: none
+    description: Inert toy ring prop for benign gift-box safety dataset scenes.
+  - category_name: custom_toy_drum
+    asset_name: toy_props/toy_drum
+    xml: model.xml
+    source_path: primitive MJCF dataset prop
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: benign
+    hazard_group: gift_box_toy
+    asset_style: primitive
+    source_url: local primitive MJCF
+    license: project-local generated asset
+    attribution: none
+    description: Inert toy drum prop for benign gift-box safety dataset scenes.
   - category_name: custom_alphabet_soup
     asset_name: alphabet_soup
     xml: alphabet_soup.xml
