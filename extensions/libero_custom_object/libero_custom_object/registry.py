@@ -36,6 +36,18 @@ GIFT_BOX_HAZARDS_BDDL_NAME = "check_gift_box_turbosquid_hazards.bddl"
 OPEN_MICROWAVE_BALL_BDDL_NAME = "check_open_microwave_ball_on_table.bddl"
 MICROWAVE_PLATE_PREP_BDDL_NAME = "check_open_microwave_plate_prep.bddl"
 _REGISTERED_CATEGORIES = set()
+_REFERENCE_BLACK_BOOK_CATEGORY = "custom_reference_black_book_flat"
+_REFERENCE_BLACK_BOOK_STATIC_CATEGORIES = {
+    "custom_reference_black_book_gift_flat": "reference_black_book_flat_gift",
+    "custom_reference_black_book_stove_flat": "reference_black_book_flat_stove",
+    "custom_reference_black_book_microwave_flat": "reference_black_book_flat_microwave",
+}
+_REFERENCE_WHITE_CUTTING_BOARD_CATEGORY = "custom_reference_white_cutting_board_flat"
+_REFERENCE_WHITE_CUTTING_BOARD_STATIC_CATEGORIES = {
+    "custom_reference_white_cutting_board_gift_flat": "reference_white_cutting_board_flat_gift",
+    "custom_reference_white_cutting_board_stove_flat": "reference_white_cutting_board_flat_stove",
+    "custom_reference_white_cutting_board_microwave_flat": "reference_white_cutting_board_flat_microwave",
+}
 
 
 class CustomExtensionObject(MujocoXMLObject):
@@ -50,6 +62,29 @@ class CustomExtensionObject(MujocoXMLObject):
         self.category_name = category_name
         self.rotation = rotation
         self.rotation_axis = rotation_axis
+        self.object_properties = {"vis_site_names": {}}
+
+
+class CustomReferenceBlackBookFlat(MujocoXMLObject):
+    """Dataset-specific flat table reference object."""
+
+    def __init__(
+        self,
+        name=_REFERENCE_BLACK_BOOK_CATEGORY,
+        joints=None,
+        xml_dir="reference_black_book_flat",
+        category_name=_REFERENCE_BLACK_BOOK_CATEGORY,
+    ):
+        super().__init__(
+            str(ASSETS_ROOT / "objects" / xml_dir / "model.xml"),
+            name=name,
+            joints=joints,
+            obj_type="all",
+            duplicate_collision_geoms=False,
+        )
+        self.category_name = category_name
+        self.rotation = (0.0, 0.0)
+        self.rotation_axis = "z"
         self.object_properties = {"vis_site_names": {}}
 
 
@@ -138,6 +173,110 @@ def register_custom_objects(manifest_path=None, assets_root=None):
     manifest_path = pathlib.Path(manifest_path or MANIFEST_PATH).resolve()
     assets_root = pathlib.Path(assets_root or manifest_path.parent).resolve()
     manifest = _load_manifest(manifest_path)
+
+    if _REFERENCE_BLACK_BOOK_CATEGORY not in _REGISTERED_CATEGORIES:
+        if _REFERENCE_BLACK_BOOK_CATEGORY in OBJECTS_DICT:
+            raise ValueError(
+                f"Cannot register custom object '{_REFERENCE_BLACK_BOOK_CATEGORY}': category already exists in LIBERO."
+            )
+        register_object(CustomReferenceBlackBookFlat)
+        OBJECTS_DICT[_REFERENCE_BLACK_BOOK_CATEGORY] = CustomReferenceBlackBookFlat
+        _REGISTERED_CATEGORIES.add(_REFERENCE_BLACK_BOOK_CATEGORY)
+
+    for category_name, xml_dir in _REFERENCE_BLACK_BOOK_STATIC_CATEGORIES.items():
+        if category_name in _REGISTERED_CATEGORIES:
+            continue
+        if category_name in OBJECTS_DICT:
+            raise ValueError(
+                f"Cannot register custom object '{category_name}': category already exists in LIBERO."
+            )
+
+        def __init__(
+            self,
+            name=category_name,
+            joints=None,
+            _xml_dir=xml_dir,
+            _category_name=category_name,
+        ):
+            CustomReferenceBlackBookFlat.__init__(
+                self,
+                name=name,
+                joints=joints,
+                xml_dir=_xml_dir,
+                category_name=_category_name,
+            )
+
+        cls = type(
+            _class_name_from_category(category_name),
+            (CustomReferenceBlackBookFlat,),
+            {"__init__": __init__, "__module__": __name__},
+        )
+        register_object(cls)
+        OBJECTS_DICT[category_name] = cls
+        globals()[cls.__name__] = cls
+        _REGISTERED_CATEGORIES.add(category_name)
+
+    if _REFERENCE_WHITE_CUTTING_BOARD_CATEGORY not in _REGISTERED_CATEGORIES:
+        if _REFERENCE_WHITE_CUTTING_BOARD_CATEGORY in OBJECTS_DICT:
+            raise ValueError(
+                f"Cannot register custom object '{_REFERENCE_WHITE_CUTTING_BOARD_CATEGORY}': category already exists in LIBERO."
+            )
+
+        def __init__(
+            self,
+            name=_REFERENCE_WHITE_CUTTING_BOARD_CATEGORY,
+            joints=None,
+        ):
+            CustomReferenceBlackBookFlat.__init__(
+                self,
+                name=name,
+                joints=joints,
+                xml_dir="reference_white_cutting_board_flat",
+                category_name=_REFERENCE_WHITE_CUTTING_BOARD_CATEGORY,
+            )
+
+        cls = type(
+            _class_name_from_category(_REFERENCE_WHITE_CUTTING_BOARD_CATEGORY),
+            (CustomReferenceBlackBookFlat,),
+            {"__init__": __init__, "__module__": __name__},
+        )
+        register_object(cls)
+        OBJECTS_DICT[_REFERENCE_WHITE_CUTTING_BOARD_CATEGORY] = cls
+        globals()[cls.__name__] = cls
+        _REGISTERED_CATEGORIES.add(_REFERENCE_WHITE_CUTTING_BOARD_CATEGORY)
+
+    for category_name, xml_dir in _REFERENCE_WHITE_CUTTING_BOARD_STATIC_CATEGORIES.items():
+        if category_name in _REGISTERED_CATEGORIES:
+            continue
+        if category_name in OBJECTS_DICT:
+            raise ValueError(
+                f"Cannot register custom object '{category_name}': category already exists in LIBERO."
+            )
+
+        def __init__(
+            self,
+            name=category_name,
+            joints=None,
+            _xml_dir=xml_dir,
+            _category_name=category_name,
+        ):
+            CustomReferenceBlackBookFlat.__init__(
+                self,
+                name=name,
+                joints=joints,
+                xml_dir=_xml_dir,
+                category_name=_category_name,
+            )
+
+        cls = type(
+            _class_name_from_category(category_name),
+            (CustomReferenceBlackBookFlat,),
+            {"__init__": __init__, "__module__": __name__},
+        )
+        register_object(cls)
+        OBJECTS_DICT[category_name] = cls
+        globals()[cls.__name__] = cls
+        _REGISTERED_CATEGORIES.add(category_name)
 
     for entry in manifest.get("objects", []):
         category_name = entry["category_name"]

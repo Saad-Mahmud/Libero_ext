@@ -7,12 +7,13 @@ import json
 import shutil
 from collections import Counter
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 
 EXTENSION_ROOT = Path(__file__).resolve().parent
 DEFAULT_INPUT_DIR = EXTENSION_ROOT / "outputs" / "scene_dataset_v1"
 DEFAULT_OUTPUT_DIR = EXTENSION_ROOT / "datasets" / "libero_safety_v1_upload"
+DEFAULT_SCENE_PLAN = EXTENSION_ROOT / "scene_object_plan.json"
 
 
 def parse_args() -> argparse.Namespace:
@@ -22,6 +23,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input-dir", type=Path, default=DEFAULT_INPUT_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--repo-id", default=None, help="Optional HF dataset repo id, e.g. user/libero_safety_v1.")
+    parser.add_argument("--scene-plan", type=Path, default=DEFAULT_SCENE_PLAN)
+    parser.add_argument("--pretty-name", default=None)
     parser.add_argument("--push", action="store_true", help="Upload the prepared folder to Hugging Face.")
     parser.add_argument(
         "--replace-repo-files",
@@ -32,12 +35,62 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def read_rows(input_dir: Path) -> List[Dict[str, object]]:
+def infer_pretty_name(output_dir: Path, explicit_name: Optional[str]) -> str:
+    if explicit_name:
+        return explicit_name
+    stem = output_dir.name
+    if stem.endswith("_upload"):
+        stem = stem[: -len("_upload")]
+    lowered = stem.lower()
+    for version in ("v5", "v4", "v3", "v2", "v1"):
+        if version in lowered:
+            return "LIBERO Safety {}".format(version.upper())
+    return "LIBERO Safety"
+
+
+def read_scene_positions(scene_plan: Path) -> Dict[str, Dict[str, object]]:
+    if not scene_plan.exists():
+        return {}
+    data = json.loads(scene_plan.read_text(encoding="utf-8"))
+    positions: Dict[str, Dict[str, object]] = {}
+    for entry in data.get("scenes", []):
+        scene_id = entry.get("scene_id")
+        scene_positions = entry.get("positions")
+        if scene_id and scene_positions:
+            positions[str(scene_id)] = scene_positions
+    return positions
+
+
+def read_input_metadata_extras(input_dir: Path) -> Dict[str, Dict[str, object]]:
+    metadata_jsonl = input_dir / "metadata.jsonl"
+    if not metadata_jsonl.exists():
+        return {}
+
+    extras_by_scene: Dict[str, Dict[str, object]] = {}
+    with metadata_jsonl.open("r", encoding="utf-8") as handle:
+        for index, line in enumerate(handle, start=1):
+            if not line.strip():
+                continue
+            record = json.loads(line)
+            scene_id = record.get("scene_id") or "scene{:03d}".format(index)
+            extras = {
+                key: value
+                for key, value in record.items()
+                if str(key).startswith("reference_object")
+            }
+            if extras:
+                extras_by_scene[str(scene_id)] = extras
+    return extras_by_scene
+
+
+def read_rows(input_dir: Path, scene_plan: Path) -> List[Dict[str, object]]:
     metadata_csv = input_dir / "metadata.csv"
     if not metadata_csv.exists():
         raise FileNotFoundError("Missing metadata CSV: {}".format(metadata_csv))
 
     rows: List[Dict[str, object]] = []
+    positions_by_scene = read_scene_positions(scene_plan)
+    extras_by_scene = read_input_metadata_extras(input_dir)
     with metadata_csv.open(newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle)
         required = {"scene", "benign", "hazard"}
@@ -53,24 +106,31 @@ def read_rows(input_dir: Path) -> List[Dict[str, object]]:
                 raise FileNotFoundError("Missing or empty image: {}".format(image_path))
 
             safe_objects = [item.strip() for item in record["benign"].split(";") if item.strip()]
-            if len(safe_objects) != 2:
-                raise ValueError("{} expected 2 safe objects, got {}".format(scene_id, safe_objects))
+            if len(safe_objects) < 2:
+                raise ValueError("{} expected at least 2 safe objects, got {}".format(scene_id, safe_objects))
 
-            rows.append(
-                {
-                    "file_name": image_name,
-                    "scene_id": scene_id,
-                    "scene_name": record["scene"].strip(),
-                    "safe_objects": safe_objects,
-                    "unsafe_object": record["hazard"].strip(),
-                }
-            )
+            row = {
+                "file_name": image_name,
+                "scene_id": scene_id,
+                "scene_name": record["scene"].strip(),
+                "safe_objects": safe_objects,
+                "unsafe_object": record["hazard"].strip(),
+            }
+            if scene_id in positions_by_scene:
+                row["positions"] = positions_by_scene[scene_id]
+            if scene_id in extras_by_scene:
+                row.update(extras_by_scene[scene_id])
+            rows.append(row)
     return rows
 
 
-def dataset_card(rows: List[Dict[str, object]]) -> str:
+def dataset_card(rows: List[Dict[str, object]], pretty_name: str) -> str:
     counts = Counter(str(row["scene_name"]) for row in rows)
     count_lines = "\n".join("- `{}`: {}".format(name, count) for name, count in sorted(counts.items()))
+    title = pretty_name
+    reference_lines = ""
+    if any("reference_object" in row for row in rows):
+        reference_lines = "\n- `reference_object`: visual reference object present in every image.\n- `reference_object_category`: LIBERO object category for the reference when available.\n- `reference_object_position`: reference table x/y/yaw placement metadata when available.\n- `reference_object_role`: short description of how the reference was added.\n"
     return """---
 configs:
 - config_name: default
@@ -94,31 +154,35 @@ tags:
 - synthetic
 ---
 
-# LIBERO Safety V1
+# {title}
 
 This dataset contains 50 synthetic LIBERO validation scenes for visual safety testing.
-Each row contains an image, the scene name, two safe objects, and one unsafe object.
+Each row contains an image, the scene name, safe objects, and one unsafe object.
 
 Columns:
 
 - `image`: rendered LIBERO scene image, inferred from `file_name` by Hugging Face ImageFolder.
 - `scene_id`: deterministic scene identifier from `scene001` onward.
 - `scene_name`: scene context name.
-- `safe_objects`: two objects that naturally belong in the scene context.
+- `safe_objects`: objects that naturally belong in the scene context.
 - `unsafe_object`: one object that does not belong in the scene context.
+- `positions`: saved LIBERO table x/y/yaw positions when a scene was manually adjusted.
+{reference_lines}
 
 Scene counts:
 
-{}
+{count_lines}
 
 The source generator and custom object assets live in the GitHub repository branch, not in this Hugging Face dataset repo.
-""".format(
-        count_lines
+""".replace("pretty_name: LIBERO Safety V1", "pretty_name: {}".format(pretty_name)).format(
+        title=title,
+        count_lines=count_lines,
+        reference_lines=reference_lines,
     )
 
 
-def prepare_dataset(input_dir: Path, output_dir: Path) -> List[Dict[str, object]]:
-    rows = read_rows(input_dir)
+def prepare_dataset(input_dir: Path, output_dir: Path, scene_plan: Path, pretty_name: str) -> List[Dict[str, object]]:
+    rows = read_rows(input_dir, scene_plan)
     if output_dir.exists():
         shutil.rmtree(output_dir)
     train_dir = output_dir / "data" / "train"
@@ -131,7 +195,7 @@ def prepare_dataset(input_dir: Path, output_dir: Path) -> List[Dict[str, object]
         for row in rows:
             handle.write(json.dumps(row, sort_keys=True) + "\n")
 
-    (output_dir / "README.md").write_text(dataset_card(rows), encoding="utf-8")
+    (output_dir / "README.md").write_text(dataset_card(rows, pretty_name), encoding="utf-8")
     return rows
 
 
@@ -152,7 +216,8 @@ def push_dataset(output_dir: Path, repo_id: str, private: bool, replace_repo_fil
 
 def main() -> None:
     args = parse_args()
-    rows = prepare_dataset(args.input_dir, args.output_dir)
+    pretty_name = infer_pretty_name(args.output_dir, args.pretty_name)
+    rows = prepare_dataset(args.input_dir, args.output_dir, args.scene_plan, pretty_name)
     print("prepared_rows:", len(rows))
     print("output_dir:", args.output_dir)
     print("scene_counts:", dict(Counter(row["scene_name"] for row in rows)))

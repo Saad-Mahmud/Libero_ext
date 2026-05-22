@@ -1,5 +1,6 @@
 import argparse
 import os
+import random
 import time
 from pathlib import Path
 
@@ -98,6 +99,7 @@ def parse_args():
         default=str(Path(__file__).resolve().parent / "outputs" / "scene.png"),
         help="Output PNG path for --mode image.",
     )
+    parser.add_argument("--seed", type=int, default=None, help="Seed Python and NumPy before simulator reset.")
     return parser.parse_args()
 
 
@@ -233,6 +235,12 @@ def main():
         os.environ.setdefault("MUJOCO_GL", "glfw")
     else:
         os.environ.setdefault("MUJOCO_GL", "egl")
+
+    if args.seed is not None:
+        import numpy as np
+
+        random.seed(args.seed)
+        np.random.seed(args.seed)
 
     register_custom_objects()
     bddl_file = resolve_bddl(args.bddl)

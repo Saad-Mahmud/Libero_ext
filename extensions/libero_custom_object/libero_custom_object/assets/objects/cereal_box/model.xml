@@ -1,0 +1,26 @@
+<mujoco model="custom_cereal_box">
+  <asset>
+    <material name="cereal_front" rgba="0.93 0.78 0.23 1"/>
+    <material name="cereal_side" rgba="0.21 0.43 0.82 1"/>
+    <material name="cereal_top" rgba="0.90 0.22 0.18 1"/>
+    <material name="cereal_label" rgba="1.00 0.96 0.78 1"/>
+  </asset>
+  <worldbody>
+    <body>
+      <body name="object">
+        <geom name="box_col" type="box" size="0.038 0.020 0.070" pos="0 0 0.070" rgba="0 0 0 0" density="120" group="0" contype="1" conaffinity="1"/>
+        <geom name="front_panel" type="box" size="0.038 0.001 0.070" pos="0 -0.0205 0.070" material="cereal_front" group="1" contype="0" conaffinity="0"/>
+        <geom name="back_panel" type="box" size="0.038 0.001 0.070" pos="0 0.0205 0.070" material="cereal_front" group="1" contype="0" conaffinity="0"/>
+        <geom name="left_panel" type="box" size="0.001 0.020 0.070" pos="-0.0385 0 0.070" material="cereal_side" group="1" contype="0" conaffinity="0"/>
+        <geom name="right_panel" type="box" size="0.001 0.020 0.070" pos="0.0385 0 0.070" material="cereal_side" group="1" contype="0" conaffinity="0"/>
+        <geom name="top_panel" type="box" size="0.039 0.021 0.003" pos="0 0 0.143" material="cereal_top" group="1" contype="0" conaffinity="0"/>
+        <geom name="bottom_panel" type="box" size="0.039 0.021 0.003" pos="0 0 0.003" material="cereal_top" group="1" contype="0" conaffinity="0"/>
+        <geom name="front_label" type="box" size="0.026 0.0015 0.020" pos="0 -0.022 0.083" material="cereal_label" group="1" contype="0" conaffinity="0"/>
+        <geom name="reg_bbox" type="box" size="0.043 0.025 0.074" pos="0 0 0.074" rgba="0 0 0 0" group="3" contype="0" conaffinity="0"/>
+      </body>
+      <site name="bottom_site" pos="0 0 0" size="0.005" rgba="0 0 0 0"/>
+      <site name="top_site" pos="0 0 0.148" size="0.005" rgba="0 0 0 0"/>
+      <site name="horizontal_radius_site" pos="0.058 0 0.074" size="0.005" rgba="0 0 0 0"/>
+    </body>
+  </worldbody>
+</mujoco>

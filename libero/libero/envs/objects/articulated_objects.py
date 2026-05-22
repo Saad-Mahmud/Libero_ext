@@ -235,7 +235,7 @@ class FlatStove(ArticulatedObject):
         tracking_sites_dict = {}
         tracking_sites_dict["burner"] = (self.naming_prefix + "burner", False)
         self.object_properties["vis_site_names"].update(tracking_sites_dict)
-        self.object_properties["articulation"]["default_turnon_ranges"] = [0.5, 2.1]
+        self.object_properties["articulation"]["default_turnon_ranges"] = [1.8, 2.1]
         self.object_properties["articulation"]["default_turnoff_ranges"] = [-0.005, 0.0]
 
     def turn_on(self, qpos):

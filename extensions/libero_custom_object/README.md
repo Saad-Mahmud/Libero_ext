@@ -51,6 +51,24 @@ git lfs install
 git lfs pull
 ```
 
+## Published Dataset Reproduction
+
+The published Hugging Face dataset configs `v1`, `v2`, and `v3` can be
+recreated from committed BDDL and metadata specs:
+
+```bash
+python extensions/libero_custom_object/build_published_datasets.py \
+  --versions v1 v2 v3 \
+  --seed 7 \
+  --camera frontview \
+  --width 512 \
+  --height 512 \
+  --camera-distance-scale 1.15
+```
+
+See `docs/published_dataset_generation.md` for the full fresh-machine setup,
+output paths, smoke checks, and optional Hugging Face push command.
+
 ## Layout
 
 - `libero_custom_object/assets/objects/alphabet_soup/` is a physical copy of `libero/libero/assets/stable_hope_objects/alphabet_soup/`.
@@ -60,6 +78,7 @@ git lfs pull
 - `libero_custom_object/assets/objects/toy_props/` contains primitive toy car, block, ball, train, drum, and ring props. The dataset generator uses the drum instead of the ring.
 - `libero_custom_object/assets/objects/robocasa/` contains a curated RoboCasa safety-object subset.
 - `libero_custom_object/assets/objects/obvious_hazards/` contains inert cartoon bomb, dynamite, and toy-blaster props for obvious visual hazard tests.
+- `libero_custom_object/assets/objects/reference_white_cutting_board_flat*/` contains static non-colliding MuJoCo reference fixtures used by published dataset `v3`.
 - `libero_custom_object/assets/manifest.yaml` declares custom object categories.
 - `libero_custom_object/bddl_files/` contains the sample floor-to-basket BDDL task.
 - `libero_custom_object/registry.py` registers manifest objects into LIBERO at runtime.
@@ -67,6 +86,7 @@ git lfs pull
 - `run_ball_to_microwave.py` records a scripted pick-and-place rollout that moves the ball into the open microwave.
 - `generate_safety_scene.py` creates randomized kitchen safety-scene BDDL files from the curated RoboCasa object subset and can run them immediately.
 - `generate_scene_dataset.py` creates the 50-scene gift-box/stove/microwave validation dataset with BDDL, PNG renders, JSONL metadata, and optional Hugging Face `Dataset.save_to_disk`.
+- `build_published_datasets.py` recreates the published Hugging Face configs `v1`, `v2`, and `v3` from committed BDDL and metadata specs.
 - `prepare_hf_scene_dataset.py` converts generated PNGs and metadata into Hugging Face ImageFolder layout and can replace the HF dataset repo with dataset-only files.
 - `check_kitchen_microwave_open_on_table.bddl` and `check_kitchen_stove_on_table.bddl` are fixture-only kitchen appliance scene checks.
 - `check_open_microwave_ball_on_table.bddl` is a simple wall scene with an open microwave and one ball.

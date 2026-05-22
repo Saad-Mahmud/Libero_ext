@@ -30,6 +30,15 @@ ______________________________________________________________________
 - three visuomotor policy network architectures.
 - three lifelong learning algorithms with the sequential finetuning and multitask learning baselines.
 
+This fork also includes `extensions/libero_custom_object`, which contains the
+custom-object safety dataset generator used for
+`saaduddinM/libero_safety_v1`. To recreate published dataset configs `v1`,
+`v2`, and `v3`, see:
+
+```text
+extensions/libero_custom_object/docs/published_dataset_generation.md
+```
+
 ---
 
 

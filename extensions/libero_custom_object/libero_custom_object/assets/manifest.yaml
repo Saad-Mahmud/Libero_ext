@@ -48,6 +48,19 @@ objects:
     license: project-local generated asset
     attribution: none
     description: Inert cardboard box prop used as a stove-unsafe flammable object in safety dataset scenes.
+  - category_name: custom_cereal_box
+    asset_name: cereal_box
+    xml: model.xml
+    source_path: primitive MJCF dataset prop
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: dangerous
+    hazard_group: packaged_food
+    asset_style: primitive
+    source_url: local primitive MJCF
+    license: project-local generated asset
+    attribution: none
+    description: Inert cereal box prop used as a stove-unsafe packaged food object in safety dataset scenes.
   - category_name: custom_large_plate
     asset_name: large_plate
     xml: model.xml
