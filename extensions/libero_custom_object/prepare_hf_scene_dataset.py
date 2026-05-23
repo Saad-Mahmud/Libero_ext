@@ -24,6 +24,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--repo-id", default=None, help="Optional HF dataset repo id, e.g. user/libero_safety_v1.")
     parser.add_argument("--scene-plan", type=Path, default=DEFAULT_SCENE_PLAN)
+    parser.add_argument("--video-dir", type=Path, default=None, help="Optional folder with scene###.mp4 videos to include.")
+    parser.add_argument("--video-column", default="video", help="Metadata column name for included videos.")
     parser.add_argument("--pretty-name", default=None)
     parser.add_argument("--push", action="store_true", help="Upload the prepared folder to Hugging Face.")
     parser.add_argument(
@@ -76,7 +78,7 @@ def read_input_metadata_extras(input_dir: Path) -> Dict[str, Dict[str, object]]:
             extras = {
                 key: value
                 for key, value in record.items()
-                if str(key).startswith("reference_object")
+                if str(key).startswith("reference_object") or str(key) == "positions"
             }
             if extras:
                 extras_by_scene[str(scene_id)] = extras
@@ -131,6 +133,9 @@ def dataset_card(rows: List[Dict[str, object]], pretty_name: str) -> str:
     reference_lines = ""
     if any("reference_object" in row for row in rows):
         reference_lines = "\n- `reference_object`: visual reference object present in every image.\n- `reference_object_category`: LIBERO object category for the reference when available.\n- `reference_object_position`: reference table x/y/yaw placement metadata when available.\n- `reference_object_role`: short description of how the reference was added.\n"
+    video_lines = ""
+    if any("video" in row for row in rows):
+        video_lines = "- `video`: relative MP4 rollout path for the same scene.\n"
     return """---
 configs:
 - config_name: default
@@ -167,6 +172,7 @@ Columns:
 - `safe_objects`: objects that naturally belong in the scene context.
 - `unsafe_object`: one object that does not belong in the scene context.
 - `positions`: saved LIBERO table x/y/yaw positions when a scene was manually adjusted.
+{video_lines}
 {reference_lines}
 
 Scene counts:
@@ -178,10 +184,18 @@ The source generator and custom object assets live in the GitHub repository bran
         title=title,
         count_lines=count_lines,
         reference_lines=reference_lines,
+        video_lines=video_lines,
     )
 
 
-def prepare_dataset(input_dir: Path, output_dir: Path, scene_plan: Path, pretty_name: str) -> List[Dict[str, object]]:
+def prepare_dataset(
+    input_dir: Path,
+    output_dir: Path,
+    scene_plan: Path,
+    pretty_name: str,
+    video_dir: Optional[Path] = None,
+    video_column: str = "video",
+) -> List[Dict[str, object]]:
     rows = read_rows(input_dir, scene_plan)
     if output_dir.exists():
         shutil.rmtree(output_dir)
@@ -190,6 +204,14 @@ def prepare_dataset(input_dir: Path, output_dir: Path, scene_plan: Path, pretty_
 
     for row in rows:
         shutil.copy2(input_dir / str(row["file_name"]), train_dir / str(row["file_name"]))
+        if video_dir is not None:
+            scene_id = str(row["scene_id"])
+            video_name = "{}.mp4".format(scene_id)
+            source_video = video_dir / video_name
+            if not source_video.exists() or source_video.stat().st_size == 0:
+                raise FileNotFoundError("Missing or empty video: {}".format(source_video))
+            shutil.copy2(source_video, train_dir / video_name)
+            row[video_column] = video_name
 
     with (train_dir / "metadata.jsonl").open("w", encoding="utf-8") as handle:
         for row in rows:
@@ -217,7 +239,14 @@ def push_dataset(output_dir: Path, repo_id: str, private: bool, replace_repo_fil
 def main() -> None:
     args = parse_args()
     pretty_name = infer_pretty_name(args.output_dir, args.pretty_name)
-    rows = prepare_dataset(args.input_dir, args.output_dir, args.scene_plan, pretty_name)
+    rows = prepare_dataset(
+        args.input_dir,
+        args.output_dir,
+        args.scene_plan,
+        pretty_name,
+        video_dir=args.video_dir,
+        video_column=args.video_column,
+    )
     print("prepared_rows:", len(rows))
     print("output_dir:", args.output_dir)
     print("scene_counts:", dict(Counter(row["scene_name"] for row in rows)))

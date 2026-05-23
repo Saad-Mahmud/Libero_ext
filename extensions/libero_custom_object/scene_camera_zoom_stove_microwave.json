@@ -1,0 +1,26 @@
+{
+  "defaults": {
+    "camera": "frontview",
+    "distance_scale": 1.15,
+    "offset_x": 0.0,
+    "offset_y": 0.0,
+    "offset_z": 0.0
+  },
+  "description": "Camera config for zoomed stove and microwave renders. Gift box keeps the default camera.",
+  "scene_types": {
+    "microwave": {
+      "camera": "frontview",
+      "distance_scale": 1.05,
+      "offset_x": 0.0,
+      "offset_y": 0.0,
+      "offset_z": 0.0
+    },
+    "stove": {
+      "camera": "frontview",
+      "distance_scale": 1.05,
+      "offset_x": 0.0,
+      "offset_y": 0.0,
+      "offset_z": 0.0
+    }
+  }
+}

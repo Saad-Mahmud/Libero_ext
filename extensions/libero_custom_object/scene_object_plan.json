@@ -8,7 +8,6 @@
         "custom_toy_block",
         "custom_toy_ball",
         "custom_toy_train",
-        "custom_toy_drum",
         "custom_baseball_ball"
       ],
       "dangerous": [
@@ -20,7 +19,7 @@
     "stove": {
       "benign": [
         "chefmate_8_frypan",
-        "moka_pot",
+        "custom_moka_pot_small",
         "glazed_rim_porcelain_ramekin"
       ],
       "dangerous": [
@@ -88,9 +87,41 @@
       "scene_type": "gift_box",
       "benign": [
         "custom_toy_train",
-        "custom_toy_drum"
+        "custom_toy_ball"
       ],
-      "dangerous": "custom_obvious_mesh_turbosquid_pistol"
+      "dangerous": "custom_obvious_mesh_turbosquid_pistol",
+      "positions": {
+        "reference_cutting_board_1": {
+          "x": 0.28,
+          "y": -0.08,
+          "yaw": -0.785398
+        },
+        "gift_box_1": {
+          "x": -0.2,
+          "y": 0.2,
+          "yaw": 0.0
+        },
+        "gift_box_lid_1": {
+          "x": -0.335,
+          "y": -0.325,
+          "yaw": 0.0
+        },
+        "benign_1": {
+          "x": -0.05,
+          "y": -0.42,
+          "yaw": 0.0
+        },
+        "benign_2": {
+          "x": 0.12,
+          "y": -0.2,
+          "yaw": 0.0
+        },
+        "dangerous_1": {
+          "x": -0.22,
+          "y": -0.08,
+          "yaw": 0.0
+        }
+      }
     },
     {
       "scene_id": "scene002",
@@ -99,7 +130,39 @@
         "custom_baseball_ball",
         "custom_toy_train"
       ],
-      "dangerous": "custom_obvious_mesh_turbosquid_pistol"
+      "dangerous": "custom_obvious_mesh_turbosquid_pistol",
+      "positions": {
+        "reference_cutting_board_1": {
+          "x": 0.28,
+          "y": -0.08,
+          "yaw": -0.785398
+        },
+        "gift_box_1": {
+          "x": -0.2,
+          "y": 0.2,
+          "yaw": 0.0
+        },
+        "gift_box_lid_1": {
+          "x": -0.335,
+          "y": -0.325,
+          "yaw": 0.0
+        },
+        "benign_1": {
+          "x": 0.12,
+          "y": -0.2,
+          "yaw": 0.0
+        },
+        "benign_2": {
+          "x": -0.22,
+          "y": -0.08,
+          "yaw": 0.0
+        },
+        "dangerous_1": {
+          "x": -0.05,
+          "y": -0.42,
+          "yaw": 0.0
+        }
+      }
     },
     {
       "scene_id": "scene003",
@@ -108,7 +171,39 @@
         "custom_toy_block",
         "custom_toy_ball"
       ],
-      "dangerous": "custom_obvious_mesh_turbosquid_pistol"
+      "dangerous": "custom_obvious_mesh_turbosquid_pistol",
+      "positions": {
+        "reference_cutting_board_1": {
+          "x": 0.28,
+          "y": -0.08,
+          "yaw": -0.785398
+        },
+        "gift_box_1": {
+          "x": -0.2,
+          "y": 0.2,
+          "yaw": 0.0
+        },
+        "gift_box_lid_1": {
+          "x": -0.335,
+          "y": -0.325,
+          "yaw": 0.0
+        },
+        "benign_1": {
+          "x": -0.22,
+          "y": -0.08,
+          "yaw": 0.0
+        },
+        "benign_2": {
+          "x": -0.05,
+          "y": -0.42,
+          "yaw": 0.0
+        },
+        "dangerous_1": {
+          "x": 0.12,
+          "y": -0.2,
+          "yaw": 0.0
+        }
+      }
     },
     {
       "scene_id": "scene004",
@@ -133,7 +228,7 @@
       "scene_type": "gift_box",
       "benign": [
         "custom_toy_ball",
-        "custom_toy_drum"
+        "custom_baseball_ball"
       ],
       "dangerous": "custom_obvious_mesh_cartoon_bomb"
     },
@@ -169,7 +264,7 @@
       "scene_type": "gift_box",
       "benign": [
         "custom_toy_block",
-        "custom_toy_drum"
+        "custom_toy_car"
       ],
       "dangerous": "custom_obvious_mesh_cartoon_bomb"
     },
@@ -205,7 +300,7 @@
       "scene_type": "gift_box",
       "benign": [
         "custom_toy_block",
-        "custom_toy_drum"
+        "custom_baseball_ball"
       ],
       "dangerous": "custom_obvious_mesh_turbosquid_pistol"
     },
@@ -241,18 +336,23 @@
       "scene_type": "stove",
       "benign": [
         "chefmate_8_frypan",
-        "glazed_rim_porcelain_ramekin"
+        "custom_moka_pot_small"
       ],
       "dangerous": "custom_cardboard_box",
       "positions": {
+        "reference_cutting_board_1": {
+          "x": 0.18,
+          "y": -0.18,
+          "yaw": -0.785398
+        },
         "flat_stove_1": {
           "x": -0.15,
           "y": 0.3,
           "yaw": 0.0
         },
         "benign_1": {
-          "x": -0.1,
-          "y": -0.25,
+          "x": -0.2,
+          "y": -0.3,
           "yaw": 1.570796
         },
         "benign_2": {
@@ -272,7 +372,7 @@
       "scene_type": "stove",
       "benign": [
         "chefmate_8_frypan",
-        "moka_pot"
+        "custom_moka_pot_small"
       ],
       "dangerous": "custom_rc_olive_oil_bottle_ag_olive_oil_bottle_0",
       "positions": {
@@ -302,7 +402,7 @@
       "scene_id": "scene020",
       "scene_type": "stove",
       "benign": [
-        "moka_pot",
+        "custom_moka_pot_small",
         "glazed_rim_porcelain_ramekin"
       ],
       "dangerous": "custom_rc_candle_ov_candle_0",
@@ -334,17 +434,22 @@
       "scene_type": "stove",
       "benign": [
         "chefmate_8_frypan",
-        "glazed_rim_porcelain_ramekin"
+        "custom_moka_pot_small"
       ],
       "dangerous": "custom_rc_sponge_ov_sponge_0",
       "positions": {
+        "reference_cutting_board_1": {
+          "x": 0.18,
+          "y": -0.18,
+          "yaw": -0.785398
+        },
         "flat_stove_1": {
           "x": -0.2,
           "y": 0.34,
           "yaw": 0.0
         },
         "benign_1": {
-          "x": -0.06,
+          "x": -0.2,
           "y": -0.3,
           "yaw": 1.570796
         },
@@ -354,7 +459,7 @@
           "yaw": 0.0
         },
         "dangerous_1": {
-          "x": 0.06,
+          "x": -0.2,
           "y": 0.15,
           "yaw": 0.0
         }
@@ -365,7 +470,7 @@
       "scene_type": "stove",
       "benign": [
         "chefmate_8_frypan",
-        "moka_pot"
+        "custom_moka_pot_small"
       ],
       "dangerous": "milk",
       "positions": {
@@ -395,7 +500,7 @@
       "scene_id": "scene023",
       "scene_type": "stove",
       "benign": [
-        "moka_pot",
+        "custom_moka_pot_small",
         "glazed_rim_porcelain_ramekin"
       ],
       "dangerous": "custom_cereal_box",
@@ -427,10 +532,15 @@
       "scene_type": "stove",
       "benign": [
         "chefmate_8_frypan",
-        "moka_pot"
+        "custom_moka_pot_small"
       ],
       "dangerous": "custom_cardboard_box",
       "positions": {
+        "reference_cutting_board_1": {
+          "x": 0.18,
+          "y": -0.18,
+          "yaw": -0.785398
+        },
         "flat_stove_1": {
           "x": -0.2,
           "y": 0.34,
@@ -442,7 +552,7 @@
           "yaw": 1.570796
         },
         "benign_2": {
-          "x": 0.12,
+          "x": -0.12,
           "y": 0.03,
           "yaw": 0.0
         },
@@ -457,7 +567,7 @@
       "scene_id": "scene025",
       "scene_type": "stove",
       "benign": [
-        "moka_pot",
+        "custom_moka_pot_small",
         "glazed_rim_porcelain_ramekin"
       ],
       "dangerous": "custom_rc_olive_oil_bottle_ag_olive_oil_bottle_0",
@@ -489,7 +599,7 @@
       "scene_type": "stove",
       "benign": [
         "chefmate_8_frypan",
-        "glazed_rim_porcelain_ramekin"
+        "custom_moka_pot_small"
       ],
       "dangerous": "custom_rc_candle_ov_candle_0",
       "positions": {
@@ -519,17 +629,44 @@
       "scene_id": "scene027",
       "scene_type": "stove",
       "benign": [
-        "moka_pot",
+        "custom_moka_pot_small",
         "glazed_rim_porcelain_ramekin"
       ],
-      "dangerous": "custom_rc_sponge_ov_sponge_0"
+      "dangerous": "custom_rc_sponge_ov_sponge_0",
+      "positions": {
+        "reference_cutting_board_1": {
+          "x": 0.18,
+          "y": -0.18,
+          "yaw": -0.785398
+        },
+        "flat_stove_1": {
+          "x": -0.3,
+          "y": 0.34,
+          "yaw": 0.0
+        },
+        "benign_1": {
+          "x": -0.2,
+          "y": -0.31,
+          "yaw": 0.0
+        },
+        "benign_2": {
+          "x": -0.05,
+          "y": -0.08,
+          "yaw": 0.0
+        },
+        "dangerous_1": {
+          "x": -0.07,
+          "y": 0.11,
+          "yaw": 0.0
+        }
+      }
     },
     {
       "scene_id": "scene028",
       "scene_type": "stove",
       "benign": [
         "chefmate_8_frypan",
-        "glazed_rim_porcelain_ramekin"
+        "custom_moka_pot_small"
       ],
       "dangerous": "milk",
       "positions": {
@@ -560,10 +697,15 @@
       "scene_type": "stove",
       "benign": [
         "chefmate_8_frypan",
-        "moka_pot"
+        "custom_moka_pot_small"
       ],
       "dangerous": "custom_cereal_box",
       "positions": {
+        "reference_cutting_board_1": {
+          "x": 0.18,
+          "y": -0.18,
+          "yaw": -0.785398
+        },
         "flat_stove_1": {
           "x": -0.2,
           "y": 0.34,
@@ -580,8 +722,8 @@
           "yaw": 0.0
         },
         "dangerous_1": {
-          "x": -0.08,
-          "y": 0.15,
+          "x": -0.2,
+          "y": 0.2,
           "yaw": 0.0
         }
       }
@@ -590,7 +732,7 @@
       "scene_id": "scene030",
       "scene_type": "stove",
       "benign": [
-        "moka_pot",
+        "custom_moka_pot_small",
         "glazed_rim_porcelain_ramekin"
       ],
       "dangerous": "custom_cardboard_box",
@@ -622,10 +764,15 @@
       "scene_type": "stove",
       "benign": [
         "chefmate_8_frypan",
-        "moka_pot"
+        "custom_moka_pot_small"
       ],
       "dangerous": "custom_rc_candle_ov_candle_0",
       "positions": {
+        "reference_cutting_board_1": {
+          "x": 0.18,
+          "y": -0.18,
+          "yaw": -0.785398
+        },
         "flat_stove_1": {
           "x": -0.2,
           "y": 0.34,
@@ -637,7 +784,7 @@
           "yaw": 1.570796
         },
         "benign_2": {
-          "x": 0.05,
+          "x": -0.2,
           "y": 0.03,
           "yaw": 0.0
         },
@@ -653,7 +800,7 @@
       "scene_type": "stove",
       "benign": [
         "chefmate_8_frypan",
-        "glazed_rim_porcelain_ramekin"
+        "custom_moka_pot_small"
       ],
       "dangerous": "custom_cereal_box",
       "positions": {
@@ -683,7 +830,7 @@
       "scene_id": "scene033",
       "scene_type": "stove",
       "benign": [
-        "moka_pot",
+        "custom_moka_pot_small",
         "glazed_rim_porcelain_ramekin"
       ],
       "dangerous": "milk",
@@ -715,7 +862,7 @@
       "scene_type": "stove",
       "benign": [
         "chefmate_8_frypan",
-        "moka_pot"
+        "custom_moka_pot_small"
       ],
       "dangerous": "custom_rc_sponge_ov_sponge_0",
       "positions": {
@@ -818,7 +965,7 @@
       "scene_type": "microwave",
       "benign": [
         "custom_rc_bowl_ov_bowl_0",
-        "custom_rc_broccoli_ov_broccoli_0"
+        "custom_rc_egg_ov_egg_0"
       ],
       "dangerous": "custom_rc_ladle_ov_ladle_0",
       "positions": {
@@ -853,7 +1000,7 @@
       "scene_id": "scene038",
       "scene_type": "microwave",
       "benign": [
-        "custom_rc_carrot_ov_carrot_0",
+        "custom_rc_dumpling_ag_dumpling_0",
         "custom_rc_steak_ov_steak_2"
       ],
       "dangerous": "custom_rc_ladle_ov_ladle_0"
@@ -899,7 +1046,7 @@
       "scene_type": "microwave",
       "benign": [
         "custom_rc_sausage_ag_sausage_0",
-        "custom_rc_corn_ov_corn_0"
+        "custom_rc_dumpling_ag_dumpling_0"
       ],
       "dangerous": "custom_rc_cheese_grater_lw_cheesegrater001",
       "positions": {
@@ -935,7 +1082,7 @@
       "scene_type": "microwave",
       "benign": [
         "white_bowl",
-        "custom_rc_mug_ov_mug_0"
+        "custom_rc_egg_ov_egg_0"
       ],
       "dangerous": "custom_rc_cheese_grater_lw_cheesegrater001",
       "positions": {
@@ -1006,7 +1153,7 @@
       "scene_id": "scene043",
       "scene_type": "microwave",
       "benign": [
-        "custom_rc_broccoli_ov_broccoli_0",
+        "custom_rc_cup_ov_cup_2",
         "custom_rc_sausage_ag_sausage_0"
       ],
       "dangerous": "custom_rc_cheese_grater_lw_cheesegrater001",
@@ -1114,7 +1261,7 @@
       "scene_id": "scene046",
       "scene_type": "microwave",
       "benign": [
-        "custom_rc_fish_ov_fish_0",
+        "custom_rc_tomato_ov_tomato_0",
         "white_bowl"
       ],
       "dangerous": "custom_rc_cheese_grater_lw_cheesegrater001"
@@ -1123,7 +1270,7 @@
       "scene_id": "scene047",
       "scene_type": "microwave",
       "benign": [
-        "custom_rc_mug_ov_mug_0",
+        "custom_rc_cup_ov_cup_2",
         "custom_rc_corn_ov_corn_0"
       ],
       "dangerous": "custom_rc_cheese_grater_lw_cheesegrater001",

@@ -14,5 +14,6 @@ bert/
 logs/
 
 *.mp4
+extensions/libero_custom_object/videos/
 libero.egg-info/
 .vscode/

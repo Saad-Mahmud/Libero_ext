@@ -11,6 +11,7 @@ import json
 import math
 import mimetypes
 import random
+import re
 import shutil
 import sys
 from dataclasses import dataclass, field
@@ -20,6 +21,8 @@ from pathlib import Path
 from threading import Lock
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 from urllib.parse import parse_qs, urlparse
+
+import dataset_config as config_util
 
 try:
     from datasets import Dataset, DatasetDict, Image as HfImage, load_dataset, load_from_disk
@@ -39,9 +42,12 @@ except ImportError as exc:  # pragma: no cover - shown as a startup error.
 
 
 IMAGE_SUFFIXES = {".bmp", ".gif", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".webp"}
+VIDEO_SUFFIXES = {".mp4", ".mov", ".m4v", ".webm"}
 PREFERRED_IMAGE_COLUMNS = ("image", "img", "photo", "picture", "render", "rgb")
 EXTENSION_ROOT = Path(__file__).resolve().parent
 GENERATOR_PATH = EXTENSION_ROOT / "generate_scene_dataset.py"
+DEFAULT_CAMERA_CONFIG_PATH = EXTENSION_ROOT / "scene_camera_config.json"
+DEFAULT_VIDEO_ROOT = EXTENSION_ROOT / "videos" / "libero_safety_pick_place"
 
 
 @dataclass
@@ -60,6 +66,13 @@ class ViewerState:
     render_width: int
     render_height: int
     camera_distance_scale: float
+    camera_offset_x: float
+    camera_offset_y: float
+    camera_offset_z: float
+    camera_config_path: Path
+    video_dir: Optional[Path]
+    dataset_config: Optional[Dict[str, Any]] = None
+    dataset_config_path: Optional[Path] = None
     preview_images: Dict[str, Path] = field(default_factory=dict)
     preview_bddls: Dict[str, Path] = field(default_factory=dict)
     preview_positions: Dict[str, Dict[str, Dict[str, float]]] = field(default_factory=dict)
@@ -101,6 +114,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--width", type=int, default=512)
     parser.add_argument("--height", type=int, default=512)
     parser.add_argument("--camera-distance-scale", type=float, default=1.15)
+    parser.add_argument("--camera-offset-x", type=float, default=0.0)
+    parser.add_argument("--camera-offset-y", type=float, default=0.0)
+    parser.add_argument("--camera-offset-z", type=float, default=0.0)
+    parser.add_argument(
+        "--camera-config",
+        type=Path,
+        default=DEFAULT_CAMERA_CONFIG_PATH,
+        help="JSON file where per-scene-type camera configs are saved.",
+    )
+    parser.add_argument("--config-mode", choices=config_util.CONFIG_MODES, default="current")
+    parser.add_argument("--config-dir", type=Path, default=config_util.CONFIG_ROOT)
+    parser.add_argument("--config", type=Path, default=None, help="Explicit v4/v5 config JSON path.")
+    parser.add_argument(
+        "--video-dir",
+        type=Path,
+        default=None,
+        help="Optional folder containing scene###.mp4 files for the loaded dataset.",
+    )
     return parser.parse_args()
 
 
@@ -285,6 +316,20 @@ def infer_generator_output_name(dataset_location: Path) -> str:
     return name
 
 
+def infer_video_dir(dataset_location: Path, generator_output_name: str, explicit_dir: Optional[Path]) -> Optional[Path]:
+    if explicit_dir is not None:
+        return explicit_dir.expanduser().resolve()
+    candidates = []
+    for value in (generator_output_name, dataset_location.name):
+        match = re.search(r"(v\d+)", value)
+        if match:
+            candidates.append(DEFAULT_VIDEO_ROOT / match.group(1))
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate.resolve()
+    return candidates[0].resolve() if candidates else None
+
+
 def load_viewer_state(args: argparse.Namespace) -> ViewerState:
     dataset_location = args.dataset_location.expanduser().resolve()
     if not dataset_location.exists():
@@ -292,6 +337,27 @@ def load_viewer_state(args: argparse.Namespace) -> ViewerState:
     dataset, split, load_mode = load_any_dataset(dataset_location, args.split)
     image_column = infer_image_column(dataset, args.image_column)
     generator_output_name = args.generator_output_name or infer_generator_output_name(dataset_location)
+    video_dir = infer_video_dir(dataset_location, generator_output_name, args.video_dir)
+    inferred_version = config_util.infer_version(generator_output_name, dataset_location)
+    dataset_config = None
+    dataset_config_path = None
+    if args.config is not None or inferred_version in config_util.CONFIG_VERSIONS:
+        dataset_config = config_util.load_config(
+            version=inferred_version,
+            mode=args.config_mode,
+            config=args.config,
+            config_dir=args.config_dir,
+        )
+        dataset_config_path = Path(str(dataset_config["_config_path"]))
+        image_settings = config_util.image_settings(dataset_config)
+        default_camera = config_util.camera_settings(dataset_config, "gift_box")
+        args.camera = str(image_settings["camera"])
+        args.width = int(image_settings["width"])
+        args.height = int(image_settings["height"])
+        args.camera_distance_scale = float(default_camera["distance_scale"])
+        args.camera_offset_x = float(default_camera["offset_x"])
+        args.camera_offset_y = float(default_camera["offset_y"])
+        args.camera_offset_z = float(default_camera["offset_z"])
     return ViewerState(
         dataset=dataset,
         dataset_location=dataset_location,
@@ -307,6 +373,13 @@ def load_viewer_state(args: argparse.Namespace) -> ViewerState:
         render_width=args.width,
         render_height=args.height,
         camera_distance_scale=args.camera_distance_scale,
+        camera_offset_x=args.camera_offset_x,
+        camera_offset_y=args.camera_offset_y,
+        camera_offset_z=args.camera_offset_z,
+        camera_config_path=args.camera_config.expanduser().resolve(),
+        video_dir=video_dir,
+        dataset_config=dataset_config,
+        dataset_config_path=dataset_config_path,
     )
 
 
@@ -333,6 +406,13 @@ def jsonable(value: Any) -> Any:
         return value
     except TypeError:
         return str(value)
+
+
+def active_dataset_config(state: ViewerState) -> Optional[Dict[str, Any]]:
+    if state.dataset_config_path is None:
+        return None
+    state.dataset_config = config_util.load_config(config=state.dataset_config_path)
+    return state.dataset_config
 
 
 def resolve_image_from_value(value: Any) -> PilImage.Image:
@@ -400,6 +480,37 @@ def dataset_image_path(state: ViewerState, row: Dict[str, Any]) -> Optional[Path
     return candidates[-1]
 
 
+def dataset_video_path(state: ViewerState, row: Dict[str, Any], index: int) -> Optional[Path]:
+    scene_id = row_scene_id(row, index)
+    candidates: List[Path] = []
+    if state.video_dir is not None:
+        candidates.extend(state.video_dir / "{}{}".format(scene_id, suffix) for suffix in (".mp4", ".webm", ".mov", ".m4v"))
+    for key in ("video", "video_path", "file_video", "video_file"):
+        value = row.get(key)
+        if isinstance(value, str) and Path(value).suffix.lower() in VIDEO_SUFFIXES:
+            candidates.append(Path(value))
+    for candidate in candidates:
+        if candidate.exists() and candidate.is_file():
+            return candidate
+    return candidates[0] if candidates else None
+
+
+def video_payload(state: ViewerState, index: int) -> Dict[str, Any]:
+    row = state.dataset[index]
+    scene_id = row_scene_id(row, index)
+    path = dataset_video_path(state, row, index)
+    has_video = path is not None and path.exists() and path.is_file()
+    return {
+        "index": index,
+        "scene_id": scene_id,
+        "has_video": has_video,
+        "video_url": "/video?index={}".format(index) if has_video else None,
+        "video_path": str(path) if path is not None else None,
+        "video_dir": str(state.video_dir) if state.video_dir is not None else None,
+        "size_bytes": path.stat().st_size if has_video else 0,
+    }
+
+
 def image_bytes(state: ViewerState, index: int, use_preview: bool = False) -> bytes:
     row = state.dataset[index]
     scene_id = row_scene_id(row, index)
@@ -430,20 +541,43 @@ def clamp_index(raw_index: str, total: int) -> int:
 def generator_context(state: ViewerState, index: int) -> Dict[str, Any]:
     row = state.dataset[index]
     scene_id = row_scene_id(row, index)
-    plan = state.generator.load_scene_object_plan()
-    if scene_id not in plan:
-        raise ValueError("{} is not present in {}".format(scene_id, state.generator.SCENE_OBJECT_PLAN_PATH))
-    entry = plan[scene_id]
-    scene_type = str(entry["scene_type"])
-    seed = scene_seed(state.generator_seed, scene_number(scene_id))
-    rng = random.Random(seed)
-    benign, dangerous = state.generator.planned_scene_objects(scene_id, scene_type, plan)
-    positions = state.generator.scene_position_plan(scene_id, plan)
-    reference_object = reference_object_from_row(state, row)
+    dataset_config = active_dataset_config(state)
+    config_scene = None
+    if dataset_config is not None:
+        scenes = config_util.scenes_by_id(dataset_config)
+        if scene_id not in scenes:
+            raise ValueError("{} is not present in {}".format(scene_id, state.dataset_config_path))
+        config_scene = scenes[scene_id]
+        scene_type = str(config_scene["scene_type"])
+        seed = config_util.scene_seed(dataset_config, scene_id)
+        rng = random.Random(seed)
+        benign = [
+            state.generator.OBJECT_SPECS_BY_CATEGORY[str(category)]
+            for category in config_scene["benign"]
+        ]
+        dangerous = state.generator.OBJECT_SPECS_BY_CATEGORY[str(config_scene["dangerous"])]
+        positions = config_scene.get("positions", {})
+        reference_object = config_util.reference_object_from_scene(
+            state.generator,
+            config_scene,
+            positions,
+        )
+    else:
+        plan = state.generator.load_scene_object_plan()
+        if scene_id not in plan:
+            raise ValueError("{} is not present in {}".format(scene_id, state.generator.SCENE_OBJECT_PLAN_PATH))
+        entry = plan[scene_id]
+        scene_type = str(entry["scene_type"])
+        seed = scene_seed(state.generator_seed, scene_number(scene_id))
+        rng = random.Random(seed)
+        benign, dangerous = state.generator.planned_scene_objects(scene_id, scene_type, plan)
+        positions = state.generator.scene_position_plan(scene_id, plan)
+        reference_object = reference_object_from_row(state, row)
     return {
         "row": row,
         "scene_id": scene_id,
         "scene_type": scene_type,
+        "config_scene": config_scene,
         "seed": seed,
         "rng": rng,
         "benign": benign,
@@ -526,15 +660,128 @@ def normalize_requested_positions(raw_positions: Any) -> Dict[str, Dict[str, flo
 
 
 def render_args(state: ViewerState) -> argparse.Namespace:
+    return render_args_for_camera(state, None)
+
+
+def base_camera_config(state: ViewerState) -> Dict[str, Any]:
+    return {
+        "camera": state.render_camera,
+        "distance_scale": state.camera_distance_scale,
+        "offset_x": state.camera_offset_x,
+        "offset_y": state.camera_offset_y,
+        "offset_z": state.camera_offset_z,
+    }
+
+
+def normalize_camera_config(state: ViewerState, raw_camera: Any) -> Dict[str, Any]:
+    base = base_camera_config(state)
+    raw = raw_camera if isinstance(raw_camera, dict) else {}
+
+    def number(key: str, default: float) -> float:
+        value = raw.get(key, default)
+        if key == "distance_scale":
+            value = raw.get("camera_distance_scale", value)
+        parsed = float(value)
+        if not math.isfinite(parsed):
+            raise ValueError("camera {} must be finite".format(key))
+        return round(parsed, 6)
+
+    camera = str(raw.get("camera") or base["camera"]).strip()
+    if not camera:
+        raise ValueError("camera name cannot be empty")
+    distance_scale = number("distance_scale", float(base["distance_scale"]))
+    if distance_scale <= 0:
+        raise ValueError("camera distance_scale must be greater than 0")
+    return {
+        "camera": camera,
+        "distance_scale": distance_scale,
+        "offset_x": number("offset_x", float(base["offset_x"])),
+        "offset_y": number("offset_y", float(base["offset_y"])),
+        "offset_z": number("offset_z", float(base["offset_z"])),
+    }
+
+
+def render_args_for_camera(state: ViewerState, raw_camera: Any) -> argparse.Namespace:
+    camera = normalize_camera_config(state, raw_camera)
     return argparse.Namespace(
-        camera=state.render_camera,
+        camera=camera["camera"],
         width=state.render_width,
         height=state.render_height,
-        camera_distance_scale=state.camera_distance_scale,
+        camera_distance_scale=camera["distance_scale"],
+        camera_offset_x=camera["offset_x"],
+        camera_offset_y=camera["offset_y"],
+        camera_offset_z=camera["offset_z"],
     )
 
 
-def render_preview(state: ViewerState, index: int, positions: Dict[str, Dict[str, float]]) -> Dict[str, Any]:
+def load_camera_config_file(state: ViewerState) -> Dict[str, Any]:
+    path = state.camera_config_path
+    if not path.exists():
+        return {}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError("{} must contain a JSON object".format(path))
+    return data
+
+
+def camera_config_for_scene_type(state: ViewerState, scene_type: str) -> Dict[str, Any]:
+    dataset_config = active_dataset_config(state)
+    if dataset_config is not None:
+        return config_util.camera_settings(dataset_config, scene_type)
+    data = load_camera_config_file(state)
+    scene_types = data.get("scene_types", {})
+    if not isinstance(scene_types, dict):
+        scene_types = {}
+    saved = scene_types.get(scene_type, {})
+    return normalize_camera_config(state, saved)
+
+
+def save_camera_config_for_scene_type(
+    state: ViewerState,
+    scene_type: str,
+    raw_camera: Any,
+) -> Dict[str, Any]:
+    camera = normalize_camera_config(state, raw_camera)
+    dataset_config = active_dataset_config(state)
+    if dataset_config is not None:
+        config_util.update_scene_type_camera(dataset_config, scene_type, camera)
+        config_util.write_config(dataset_config, state.dataset_config_path)
+        state.dataset_config = dataset_config
+        return camera
+    data = load_camera_config_file(state)
+    data.setdefault(
+        "description",
+        "Per-scene-type camera configs saved from hf_dataset_visualizer.py.",
+    )
+    data["defaults"] = normalize_camera_config(state, data.get("defaults", base_camera_config(state)))
+    scene_types = data.setdefault("scene_types", {})
+    if not isinstance(scene_types, dict):
+        scene_types = {}
+        data["scene_types"] = scene_types
+    scene_types[scene_type] = camera
+    state.camera_config_path.parent.mkdir(parents=True, exist_ok=True)
+    state.camera_config_path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return camera
+
+
+def camera_payload(state: ViewerState, index: int) -> Dict[str, Any]:
+    context = generator_context(state, index)
+    scene_type = context["scene_type"]
+    return {
+        "index": index,
+        "scene_id": context["scene_id"],
+        "scene_type": scene_type,
+        "camera": camera_config_for_scene_type(state, scene_type),
+        "camera_config_path": str(state.dataset_config_path or state.camera_config_path),
+    }
+
+
+def render_preview(
+    state: ViewerState,
+    index: int,
+    positions: Dict[str, Dict[str, float]],
+    raw_camera: Any = None,
+) -> Dict[str, Any]:
     context = generator_context(state, index)
     scene_id = context["scene_id"]
     preview_bddl_dir = state.generator.GENERATED_BDDL_ROOT / state.generator_output_name / "_preview"
@@ -543,6 +790,13 @@ def render_preview(state: ViewerState, index: int, positions: Dict[str, Dict[str
     preview_image_dir.mkdir(parents=True, exist_ok=True)
     bddl_path = preview_bddl_dir / "{}.bddl".format(scene_id)
     image_path = preview_image_dir / "{}.png".format(scene_id)
+    reference_object = context["reference_object"]
+    if context.get("config_scene") is not None:
+        reference_object = config_util.reference_object_from_scene(
+            state.generator,
+            context["config_scene"],
+            positions,
+        )
 
     rng = random.Random(context["seed"])
     bddl, _, _, _ = state.generator.build_scene_bddl(
@@ -552,10 +806,14 @@ def render_preview(state: ViewerState, index: int, positions: Dict[str, Dict[str
         context["dangerous"],
         rng,
         positions,
-        context["reference_object"],
+        reference_object,
     )
     bddl_path.write_text(bddl, encoding="utf-8")
-    state.generator.render_image(bddl_path, image_path, render_args(state), context["seed"])
+    camera = normalize_camera_config(
+        state,
+        raw_camera if raw_camera is not None else camera_config_for_scene_type(state, context["scene_type"]),
+    )
+    state.generator.render_image(bddl_path, image_path, render_args_for_camera(state, camera), context["seed"])
 
     rows = state.generator.scene_position_rows(
         scene_id,
@@ -564,7 +822,7 @@ def render_preview(state: ViewerState, index: int, positions: Dict[str, Dict[str
         context["dangerous"],
         random.Random(context["seed"]),
         positions,
-        context["reference_object"],
+        reference_object,
     )
     with state.edit_lock:
         state.preview_images[scene_id] = image_path
@@ -574,6 +832,7 @@ def render_preview(state: ViewerState, index: int, positions: Dict[str, Dict[str
         "index": index,
         "scene_id": scene_id,
         "positions": rows,
+        "camera": camera,
         "image_url": "/image?index={}&preview=1".format(index),
     }
 
@@ -612,6 +871,12 @@ def update_metadata_positions(state: ViewerState, scene_id: str, positions: Dict
 
 
 def save_scene_plan_positions(state: ViewerState, scene_id: str, positions: Dict[str, Dict[str, float]]) -> None:
+    dataset_config = active_dataset_config(state)
+    if dataset_config is not None:
+        config_util.update_scene_positions(dataset_config, scene_id, positions)
+        config_util.write_config(dataset_config, state.dataset_config_path)
+        state.dataset_config = dataset_config
+        return
     plan_path = Path(state.generator.SCENE_OBJECT_PLAN_PATH)
     with plan_path.open("r", encoding="utf-8") as handle:
         data = json.load(handle)
@@ -666,6 +931,14 @@ def html_page(state: ViewerState) -> str:
         "imageColumn": state.image_column,
         "columns": state.columns,
         "generatorOutputName": state.generator_output_name,
+        "renderCamera": state.render_camera,
+        "cameraDistanceScale": state.camera_distance_scale,
+        "cameraOffsetX": state.camera_offset_x,
+        "cameraOffsetY": state.camera_offset_y,
+        "cameraOffsetZ": state.camera_offset_z,
+        "cameraConfigPath": str(state.dataset_config_path or state.camera_config_path),
+        "datasetConfigPath": str(state.dataset_config_path) if state.dataset_config_path is not None else None,
+        "videoDir": str(state.video_dir) if state.video_dir is not None else None,
     }
     payload_json = json.dumps(payload)
     return """<!doctype html>
@@ -770,6 +1043,29 @@ def html_page(state: ViewerState) -> str:
       max-height: 100%;
       object-fit: contain;
     }
+    .video-stage {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fafafa;
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #video {
+      display: block;
+      width: 100%;
+      max-height: min(38vh, 420px);
+      background: #000;
+    }
+    #videoEmpty {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 20px;
+      text-align: center;
+    }
     .controls {
       display: flex;
       justify-content: center;
@@ -785,6 +1081,44 @@ def html_page(state: ViewerState) -> str:
       gap: 8px;
       margin-top: 12px;
       flex-wrap: wrap;
+    }
+    .camera-editor {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+    }
+    .camera-editor h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      font-weight: 650;
+    }
+    .camera-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      align-items: end;
+    }
+    .camera-field label {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 3px;
+    }
+    .camera-field input {
+      width: 100%;
+      height: 34px;
+      padding: 0 7px;
+    }
+    .camera-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .camera-buttons button {
+      min-width: 0;
     }
     button {
       height: 38px;
@@ -930,7 +1264,9 @@ def html_page(state: ViewerState) -> str:
       header { display: block; }
       .viewer { grid-template-columns: 1fr; }
       .image-stage { height: 58vh; min-height: 260px; }
+      #video { max-height: 34vh; }
       .details-body { max-height: none; }
+      .camera-grid, .camera-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
   </style>
 </head>
@@ -949,10 +1285,55 @@ def html_page(state: ViewerState) -> str:
         <div class="image-stage" id="stage">
           <img id="image" alt="Dataset image">
         </div>
+        <div class="video-stage" id="videoPanel">
+          <video id="video" controls preload="metadata"></video>
+          <div id="videoEmpty">No video for this scene</div>
+        </div>
         <div class="edit-controls">
           <button id="generate" class="primary" type="button">Generate</button>
           <button id="save" type="button" disabled>Save</button>
           <span class="status" id="status"></span>
+        </div>
+        <div class="camera-editor">
+          <h3>Camera</h3>
+          <div class="camera-grid">
+            <div class="camera-field">
+              <label>zoom scale</label>
+              <input id="cameraDistance" type="number" step="0.01">
+            </div>
+            <div class="camera-field">
+              <label>left/right y</label>
+              <input id="cameraOffsetY" type="number" step="0.005">
+            </div>
+            <div class="camera-field">
+              <label>up/down z</label>
+              <input id="cameraOffsetZ" type="number" step="0.005">
+            </div>
+            <div class="camera-field">
+              <label>forward x</label>
+              <input id="cameraOffsetX" type="number" step="0.005">
+            </div>
+            <div class="camera-field">
+              <label>move step</label>
+              <input id="cameraMoveStep" type="number" step="0.005" value="0.025">
+            </div>
+            <div class="camera-field">
+              <label>zoom step</label>
+              <input id="cameraZoomStep" type="number" step="0.01" value="0.05">
+            </div>
+            <button id="saveCamera" type="button">Save Camera</button>
+            <button id="resetCamera" type="button">Reset Camera</button>
+          </div>
+          <div class="camera-buttons">
+            <button id="cameraLeft" type="button">Left</button>
+            <button id="cameraRight" type="button">Right</button>
+            <button id="cameraUp" type="button">Up</button>
+            <button id="cameraDown" type="button">Down</button>
+            <button id="zoomIn" type="button">Zoom In</button>
+            <button id="zoomOut" type="button">Zoom Out</button>
+            <button id="cameraForward" type="button">Forward</button>
+            <button id="cameraBack" type="button">Back</button>
+          </div>
         </div>
         <div class="controls">
           <button id="prev" type="button">Previous</button>
@@ -984,8 +1365,11 @@ def html_page(state: ViewerState) -> str:
     let index = 0;
     let pointerStart = null;
     let pendingGenerated = false;
+    let cameraSceneType = "";
 
     const image = document.getElementById("image");
+    const video = document.getElementById("video");
+    const videoEmpty = document.getElementById("videoEmpty");
     const stage = document.getElementById("stage");
     const counter = document.getElementById("counter");
     const jump = document.getElementById("jump");
@@ -994,14 +1378,22 @@ def html_page(state: ViewerState) -> str:
     const rowLabel = document.getElementById("rowLabel");
     const generateButton = document.getElementById("generate");
     const saveButton = document.getElementById("save");
+    const saveCameraButton = document.getElementById("saveCamera");
     const status = document.getElementById("status");
+    const cameraDistance = document.getElementById("cameraDistance");
+    const cameraOffsetX = document.getElementById("cameraOffsetX");
+    const cameraOffsetY = document.getElementById("cameraOffsetY");
+    const cameraOffsetZ = document.getElementById("cameraOffsetZ");
+    const cameraMoveStep = document.getElementById("cameraMoveStep");
+    const cameraZoomStep = document.getElementById("cameraZoomStep");
 
     document.getElementById("path").textContent = config.datasetLocation;
     document.getElementById("meta").innerHTML = [
       ["rows", config.total],
       ["split", config.split],
       ["loader", config.loadMode],
-      ["image", config.imageColumn]
+      ["image", config.imageColumn],
+      ["videos", config.videoDir || "none"]
     ].map(([key, value]) => `<span class="pill">${key}: ${escapeHtml(String(value))}</span>`).join("");
     jump.max = String(config.total);
 
@@ -1024,6 +1416,108 @@ def html_page(state: ViewerState) -> str:
 
     function setStatus(message) {
       status.textContent = message || "";
+    }
+
+    function defaultCamera() {
+      return {
+        camera: config.renderCamera,
+        distance_scale: Number(config.cameraDistanceScale),
+        offset_x: Number(config.cameraOffsetX),
+        offset_y: Number(config.cameraOffsetY),
+        offset_z: Number(config.cameraOffsetZ)
+      };
+    }
+
+    function setCameraFields(camera) {
+      const next = camera || defaultCamera();
+      cameraDistance.value = String(next.distance_scale);
+      cameraOffsetX.value = String(next.offset_x);
+      cameraOffsetY.value = String(next.offset_y);
+      cameraOffsetZ.value = String(next.offset_z);
+    }
+
+    function collectCamera() {
+      return {
+        camera: config.renderCamera,
+        distance_scale: Number(cameraDistance.value),
+        offset_x: Number(cameraOffsetX.value),
+        offset_y: Number(cameraOffsetY.value),
+        offset_z: Number(cameraOffsetZ.value)
+      };
+    }
+
+    function markCameraChanged() {
+      pendingGenerated = false;
+      saveButton.disabled = true;
+      setStatus("Camera changed; click Generate");
+    }
+
+    function numericInputValue(input, fallback) {
+      const value = Number(input.value);
+      return Number.isFinite(value) ? value : fallback;
+    }
+
+    function adjustInput(input, delta, minValue = null) {
+      let value = numericInputValue(input, 0) + delta;
+      if (minValue !== null) value = Math.max(minValue, value);
+      input.value = String(Math.round(value * 1000000) / 1000000);
+      markCameraChanged();
+    }
+
+    async function loadCamera() {
+      const response = await fetch(`/api/camera?index=${index}`);
+      if (!response.ok) {
+        setCameraFields(defaultCamera());
+        saveCameraButton.disabled = true;
+        return;
+      }
+      const data = await response.json();
+      cameraSceneType = data.scene_type || "";
+      setCameraFields(data.camera);
+      saveCameraButton.disabled = false;
+    }
+
+    async function loadVideo() {
+      video.removeAttribute("src");
+      video.load();
+      video.style.display = "none";
+      videoEmpty.style.display = "block";
+      videoEmpty.textContent = "Checking video...";
+      try {
+        const response = await fetch(`/api/video?index=${index}`);
+        if (!response.ok) throw new Error("Video metadata unavailable");
+        const data = await response.json();
+        if (!data.has_video) {
+          videoEmpty.textContent = "No video for this scene";
+          return;
+        }
+        video.src = `${data.video_url}&cache=${Date.now()}`;
+        video.style.display = "block";
+        videoEmpty.style.display = "none";
+        video.load();
+      } catch (error) {
+        videoEmpty.textContent = "No video for this scene";
+      }
+    }
+
+    async function saveCamera() {
+      saveCameraButton.disabled = true;
+      setStatus("Saving camera...");
+      try {
+        const response = await fetch("/api/save_camera", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ index, camera: collectCamera() })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Save camera failed");
+        setCameraFields(data.camera);
+        setStatus(`Saved camera for ${data.scene_type}`);
+      } catch (error) {
+        setStatus(error.message);
+      } finally {
+        saveCameraButton.disabled = false;
+      }
     }
 
     function positionLabel(row) {
@@ -1114,6 +1608,8 @@ def html_page(state: ViewerState) -> str:
         return `<tr><th>${escapeHtml(key)}</th><td>${formatValue(value)}</td></tr>`;
       }).join("");
       details.innerHTML = rows ? `<table>${rows}</table>` : `<div class="empty">No columns</div>`;
+      await loadCamera();
+      await loadVideo();
       await loadPositions();
     }
 
@@ -1125,11 +1621,12 @@ def html_page(state: ViewerState) -> str:
         const response = await fetch("/api/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ index, positions: collectPositions() })
+          body: JSON.stringify({ index, positions: collectPositions(), camera: collectCamera() })
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "Generate failed");
         image.src = `${data.image_url}&cache=${Date.now()}`;
+        if (data.camera) setCameraFields(data.camera);
         renderPositions(data.positions);
         pendingGenerated = true;
         saveButton.disabled = false;
@@ -1176,6 +1673,38 @@ def html_page(state: ViewerState) -> str:
     document.getElementById("next").addEventListener("click", next);
     generateButton.addEventListener("click", generateScene);
     saveButton.addEventListener("click", saveScene);
+    saveCameraButton.addEventListener("click", saveCamera);
+    document.getElementById("resetCamera").addEventListener("click", () => {
+      setCameraFields(defaultCamera());
+      markCameraChanged();
+    });
+    document.getElementById("cameraLeft").addEventListener("click", () => {
+      adjustInput(cameraOffsetY, -numericInputValue(cameraMoveStep, 0.025));
+    });
+    document.getElementById("cameraRight").addEventListener("click", () => {
+      adjustInput(cameraOffsetY, numericInputValue(cameraMoveStep, 0.025));
+    });
+    document.getElementById("cameraUp").addEventListener("click", () => {
+      adjustInput(cameraOffsetZ, numericInputValue(cameraMoveStep, 0.025));
+    });
+    document.getElementById("cameraDown").addEventListener("click", () => {
+      adjustInput(cameraOffsetZ, -numericInputValue(cameraMoveStep, 0.025));
+    });
+    document.getElementById("zoomIn").addEventListener("click", () => {
+      adjustInput(cameraDistance, -numericInputValue(cameraZoomStep, 0.05), 0.1);
+    });
+    document.getElementById("zoomOut").addEventListener("click", () => {
+      adjustInput(cameraDistance, numericInputValue(cameraZoomStep, 0.05), 0.1);
+    });
+    document.getElementById("cameraForward").addEventListener("click", () => {
+      adjustInput(cameraOffsetX, -numericInputValue(cameraMoveStep, 0.025));
+    });
+    document.getElementById("cameraBack").addEventListener("click", () => {
+      adjustInput(cameraOffsetX, numericInputValue(cameraMoveStep, 0.025));
+    });
+    [cameraDistance, cameraOffsetX, cameraOffsetY, cameraOffsetZ].forEach((input) => {
+      input.addEventListener("input", markCameraChanged);
+    });
     document.getElementById("go").addEventListener("click", () => {
       loadItem(Number(jump.value || 1) - 1);
     });
@@ -1256,8 +1785,14 @@ class ViewerHandler(BaseHTTPRequestHandler):
                 self.handle_item(parsed.query)
             elif parsed.path == "/api/positions":
                 self.handle_positions(parsed.query)
+            elif parsed.path == "/api/camera":
+                self.handle_camera(parsed.query)
+            elif parsed.path == "/api/video":
+                self.handle_video_info(parsed.query)
             elif parsed.path == "/image":
                 self.handle_image(parsed.query)
+            elif parsed.path == "/video":
+                self.handle_video(parsed.query)
             elif parsed.path == "/favicon.ico":
                 self.send_body(HTTPStatus.NO_CONTENT, b"", "image/x-icon")
             else:
@@ -1272,6 +1807,8 @@ class ViewerHandler(BaseHTTPRequestHandler):
                 self.handle_generate()
             elif parsed.path == "/api/save":
                 self.handle_save()
+            elif parsed.path == "/api/save_camera":
+                self.handle_save_camera()
             else:
                 self.send_json(HTTPStatus.NOT_FOUND, {"error": "not found"})
         except ValueError as exc:
@@ -1308,6 +1845,9 @@ class ViewerHandler(BaseHTTPRequestHandler):
                 "columns": self.state.columns,
                 "total": self.state.total,
                 "generator_output_name": self.state.generator_output_name,
+                "camera_config_path": str(self.state.dataset_config_path or self.state.camera_config_path),
+                "dataset_config_path": str(self.state.dataset_config_path) if self.state.dataset_config_path is not None else None,
+                "video_dir": str(self.state.video_dir) if self.state.video_dir is not None else None,
             },
         )
 
@@ -1329,6 +1869,16 @@ class ViewerHandler(BaseHTTPRequestHandler):
         index = clamp_index(params.get("index", ["0"])[0], self.state.total)
         self.send_json(HTTPStatus.OK, position_payload(self.state, index))
 
+    def handle_camera(self, query: str) -> None:
+        params = parse_qs(query)
+        index = clamp_index(params.get("index", ["0"])[0], self.state.total)
+        self.send_json(HTTPStatus.OK, camera_payload(self.state, index))
+
+    def handle_video_info(self, query: str) -> None:
+        params = parse_qs(query)
+        index = clamp_index(params.get("index", ["0"])[0], self.state.total)
+        self.send_json(HTTPStatus.OK, video_payload(self.state, index))
+
     def handle_image(self, query: str) -> None:
         params = parse_qs(query)
         index = clamp_index(params.get("index", ["0"])[0], self.state.total)
@@ -1336,16 +1886,80 @@ class ViewerHandler(BaseHTTPRequestHandler):
         body = image_bytes(self.state, index, use_preview)
         self.send_body(HTTPStatus.OK, body, "image/png")
 
+    def send_file(self, path: Path, content_type: str) -> None:
+        size = path.stat().st_size
+        range_header = self.headers.get("Range", "")
+        start = 0
+        end = size - 1
+        status = HTTPStatus.OK
+        if range_header.startswith("bytes="):
+            value = range_header.split("=", 1)[1].split(",", 1)[0]
+            raw_start, _, raw_end = value.partition("-")
+            if raw_start:
+                start = max(0, int(raw_start))
+            if raw_end:
+                end = min(size - 1, int(raw_end))
+            if start > end or start >= size:
+                self.send_response(HTTPStatus.REQUESTED_RANGE_NOT_SATISFIABLE.value)
+                self.send_header("Content-Range", "bytes */{}".format(size))
+                self.end_headers()
+                return
+            status = HTTPStatus.PARTIAL_CONTENT
+
+        length = end - start + 1
+        self.send_response(status.value)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(length))
+        self.send_header("Accept-Ranges", "bytes")
+        self.send_header("Cache-Control", "no-store")
+        if status == HTTPStatus.PARTIAL_CONTENT:
+            self.send_header("Content-Range", "bytes {}-{}/{}".format(start, end, size))
+        self.end_headers()
+        with path.open("rb") as handle:
+            handle.seek(start)
+            self.wfile.write(handle.read(length))
+
+    def handle_video(self, query: str) -> None:
+        params = parse_qs(query)
+        index = clamp_index(params.get("index", ["0"])[0], self.state.total)
+        row = self.state.dataset[index]
+        path = dataset_video_path(self.state, row, index)
+        if path is None or not path.exists() or not path.is_file():
+            self.send_json(HTTPStatus.NOT_FOUND, {"error": "video not found"})
+            return
+        content_type = mimetypes.guess_type(path.name)[0] or "video/mp4"
+        self.send_file(path, content_type)
+
     def handle_generate(self) -> None:
         payload = self.read_json_request()
         index = clamp_index(str(payload.get("index", "0")), self.state.total)
         positions = normalize_requested_positions(payload.get("positions"))
-        self.send_json(HTTPStatus.OK, render_preview(self.state, index, positions))
+        self.send_json(HTTPStatus.OK, render_preview(self.state, index, positions, payload.get("camera")))
 
     def handle_save(self) -> None:
         payload = self.read_json_request()
         index = clamp_index(str(payload.get("index", "0")), self.state.total)
         self.send_json(HTTPStatus.OK, save_preview(self.state, index))
+
+    def handle_save_camera(self) -> None:
+        payload = self.read_json_request()
+        index = clamp_index(str(payload.get("index", "0")), self.state.total)
+        context = generator_context(self.state, index)
+        camera = save_camera_config_for_scene_type(
+            self.state,
+            context["scene_type"],
+            payload.get("camera"),
+        )
+        self.send_json(
+            HTTPStatus.OK,
+            {
+                "index": index,
+                "scene_id": context["scene_id"],
+                "scene_type": context["scene_type"],
+                "camera": camera,
+                "camera_config_path": str(self.state.dataset_config_path or self.state.camera_config_path),
+            },
+        )
 
 
 def main() -> None:
@@ -1361,6 +1975,9 @@ def main() -> None:
     print("rows:", state.total)
     print("image_column:", state.image_column)
     print("generator_output_name:", state.generator_output_name)
+    print("camera_config_path:", state.dataset_config_path or state.camera_config_path)
+    print("dataset_config_path:", state.dataset_config_path)
+    print("video_dir:", state.video_dir)
     print("url: http://{}:{}/".format(args.host, args.port))
     try:
         server.serve_forever()

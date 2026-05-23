@@ -61,6 +61,58 @@ objects:
     license: project-local generated asset
     attribution: none
     description: Inert cereal box prop used as a stove-unsafe packaged food object in safety dataset scenes.
+  - category_name: custom_stove_mini_metal_pot
+    asset_name: stove_props/mini_metal_pot
+    xml: model.xml
+    source_path: primitive MJCF dataset prop
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: benign
+    hazard_group: stove_cookware
+    asset_style: primitive
+    source_url: local primitive MJCF
+    license: project-local generated asset
+    attribution: none
+    description: Small lidded metal pot prop sized to fit between Panda gripper fingers in stove scenes.
+  - category_name: custom_stove_mini_saucepan
+    asset_name: stove_props/mini_saucepan
+    xml: model.xml
+    source_path: primitive MJCF dataset prop
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: benign
+    hazard_group: stove_cookware
+    asset_style: primitive
+    source_url: local primitive MJCF
+    license: project-local generated asset
+    attribution: none
+    description: Small saucepan prop with a compact handle sized to fit between Panda gripper fingers.
+  - category_name: custom_stove_mini_kettle
+    asset_name: stove_props/mini_kettle
+    xml: model.xml
+    source_path: primitive MJCF dataset prop
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: benign
+    hazard_group: stove_cookware
+    asset_style: primitive
+    source_url: local primitive MJCF
+    license: project-local generated asset
+    attribution: none
+    description: Small stovetop kettle prop sized to fit between Panda gripper fingers.
+  - category_name: custom_moka_pot_small
+    asset_name: moka_pot_small
+    xml: model.xml
+    source_path: libero/libero/assets/turbosquid_objects/moka_pot scaled to 75 percent
+    rotation: [0.0, 0.0]
+    rotation_axis: z
+    safety_label: benign
+    hazard_group: stove_cookware
+    asset_style: mesh
+    source_url: local LIBERO turbosquid object asset
+    license: same as LIBERO bundled moka_pot asset
+    attribution: LIBERO turbosquid_objects/moka_pot
+    description: Moka coffee pot scaled to 75 percent of the native LIBERO object for easier Panda gripper pickup.
   - category_name: custom_large_plate
     asset_name: large_plate
     xml: model.xml

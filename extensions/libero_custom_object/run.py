@@ -95,6 +95,24 @@ def parse_args():
         help="For --mode image, scale the fixed camera x/y position away from the scene origin.",
     )
     parser.add_argument(
+        "--camera-offset-x",
+        type=float,
+        default=0.0,
+        help="For --mode image, add a world x offset to the fixed render camera.",
+    )
+    parser.add_argument(
+        "--camera-offset-y",
+        type=float,
+        default=0.0,
+        help="For --mode image, add a world y offset to the fixed render camera.",
+    )
+    parser.add_argument(
+        "--camera-offset-z",
+        type=float,
+        default=0.0,
+        help="For --mode image, add a world z offset to the fixed render camera.",
+    )
+    parser.add_argument(
         "--output",
         default=str(Path(__file__).resolve().parent / "outputs" / "scene.png"),
         help="Output PNG path for --mode image.",
@@ -205,9 +223,17 @@ def run_image(args, bddl_file, problem_info):
     env = make_offscreen_env(args, bddl_file, use_camera_obs=True)
     obs = env.reset()
     camera = args.camera or "agentview"
-    if args.camera_distance_scale != 1.0:
+    if (
+        args.camera_distance_scale != 1.0
+        or args.camera_offset_x != 0.0
+        or args.camera_offset_y != 0.0
+        or args.camera_offset_z != 0.0
+    ):
         camera_id = env.sim.model.camera_name2id(camera)
         env.sim.model.cam_pos[camera_id][:2] *= args.camera_distance_scale
+        env.sim.model.cam_pos[camera_id][0] += args.camera_offset_x
+        env.sim.model.cam_pos[camera_id][1] += args.camera_offset_y
+        env.sim.model.cam_pos[camera_id][2] += args.camera_offset_z
         env.sim.forward()
     for _ in range(5):
         obs, _, _, _ = env.step([0.0] * 7)

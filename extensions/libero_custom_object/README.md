@@ -53,8 +53,138 @@ git lfs pull
 
 ## Published Dataset Reproduction
 
-The published Hugging Face dataset configs `v1`, `v2`, and `v3` can be
-recreated from committed BDDL and metadata specs:
+The published Hugging Face dataset configs can be recreated locally. For
+`v4` and `v5`, use the JSON configs in `configs/` as the source of truth:
+
+- `configs/master_config_v4.json` and `configs/master_config_v5.json` are the
+  canonical checked-in configs.
+- `configs/current_config_v4.json` and `configs/current_config_v5.json` are
+  editable working copies. The web visualizer saves object and camera edits
+  here.
+- Generation uses `current` by default. Pass `--config-mode master` when you
+  want to reproduce the canonical master configs exactly.
+
+### Web UI scene editing
+
+Use the web UI when you want to visually adjust the deterministic v4/v5 scene
+layout before regenerating images or videos. The UI is deliberately small: it
+loads a local HF ImageFolder dataset, shows the current image/video, exposes the
+scene metadata, and lets you edit numeric scene configuration.
+
+What can be edited:
+
+- Object and fixture table placement: `x`, `y`, and `yaw` for each listed
+  object in the scene.
+- Scene-type camera settings: camera name, zoom/distance scale, and x/y/z
+  offsets. Camera edits apply to all scenes of the same scene type.
+
+Buttons:
+
+- `Generate` renders a preview image from the edited values. It writes preview
+  files under generated output folders only; it does not change the dataset
+  config.
+- `Save` writes the edited positions to the active `current_config_*.json`.
+  Camera save writes the scene-type camera block to the same current config.
+
+Start both editable visualizers from the repo root:
+
+```bash
+python extensions/libero_custom_object/hf_dataset_visualizer.py \
+  extensions/libero_custom_object/datasets/libero_safety_v4_upload \
+  --host 127.0.0.1 \
+  --port 7862 \
+  --generator-output-name libero_safety_v4 \
+  --config-mode current \
+  --video-dir extensions/libero_custom_object/videos/libero_safety_pick_place/v4
+
+python extensions/libero_custom_object/hf_dataset_visualizer.py \
+  extensions/libero_custom_object/datasets/libero_safety_v5_upload \
+  --host 127.0.0.1 \
+  --port 7861 \
+  --generator-output-name libero_safety_v5 \
+  --config-mode current \
+  --video-dir extensions/libero_custom_object/videos/libero_safety_pick_place/v5
+```
+
+If you are SSHing into the machine, forward both ports from your local machine:
+
+```bash
+ssh -N -L 7861:127.0.0.1:7861 -L 7862:127.0.0.1:7862 rbr-saad@rbr-saad-XPS-8960
+```
+
+Then open `http://127.0.0.1:7861` for v5 and `http://127.0.0.1:7862` for v4.
+
+After edits are approved, copy the working configs into master:
+
+```bash
+cp extensions/libero_custom_object/configs/current_config_v4.json \
+   extensions/libero_custom_object/configs/master_config_v4.json
+cp extensions/libero_custom_object/configs/current_config_v5.json \
+   extensions/libero_custom_object/configs/master_config_v5.json
+```
+
+The image generation path uses the same config fields:
+
+- `scenes[].benign`, `scenes[].dangerous`, and `scenes[].positions` define the
+  BDDL object choices and placements.
+- `camera.scene_types` defines the rendered image/video camera by scene type.
+- `video` defines rollout FPS, record cadence, codec, H.264 profile, pixel
+  format, and faststart settings.
+- `pick_place` defines which benign object the video script should move.
+
+Rebuild v4/v5 images and Hugging Face upload folders from the current configs:
+
+```bash
+python extensions/libero_custom_object/create_v4_v5_specs.py \
+  --versions v4 v5 \
+  --force \
+  --config-mode current
+
+python extensions/libero_custom_object/build_published_datasets.py \
+  --versions v4 v5 \
+  --config-mode current
+```
+
+After edits are promoted to master, use `--config-mode master` in the same
+commands for the canonical rebuild.
+
+Regenerate v4/v5 pick-place videos from the same configs:
+
+```bash
+python extensions/libero_custom_object/generate_pick_place_videos.py \
+  --versions v4 v5 \
+  --config-mode current \
+  --force \
+  --stop-on-error
+```
+
+The video writer uses H.264 Baseline with `yuv420p` so the MP4s work in common
+browsers and players.
+When v4/v5 videos exist under `videos/libero_safety_pick_place/`, the Hugging
+Face upload folders include the MP4 files and a `video` metadata column.
+
+To upload the rebuilt configs to the existing Hugging Face dataset repo:
+
+```bash
+python extensions/libero_custom_object/build_published_datasets.py \
+  --versions v4 v5 \
+  --config-mode master \
+  --push-hf \
+  --repo-id saaduddinM/libero_safety_v1
+```
+
+To discard local edits and reset a working config:
+
+```bash
+cp extensions/libero_custom_object/configs/master_config_v5.json \
+   extensions/libero_custom_object/configs/current_config_v5.json
+```
+
+Do not hand-edit generated BDDL, PNGs, MP4s, or Hugging Face upload folders.
+Edit the config through the visualizer or JSON, then regenerate.
+
+The older configs `v1`, `v2`, and `v3` can still be recreated from committed
+BDDL and metadata specs:
 
 ```bash
 python extensions/libero_custom_object/build_published_datasets.py \
@@ -78,7 +208,7 @@ output paths, smoke checks, and optional Hugging Face push command.
 - `libero_custom_object/assets/objects/toy_props/` contains primitive toy car, block, ball, train, drum, and ring props. The dataset generator uses the drum instead of the ring.
 - `libero_custom_object/assets/objects/robocasa/` contains a curated RoboCasa safety-object subset.
 - `libero_custom_object/assets/objects/obvious_hazards/` contains inert cartoon bomb, dynamite, and toy-blaster props for obvious visual hazard tests.
-- `libero_custom_object/assets/objects/reference_white_cutting_board_flat*/` contains static non-colliding MuJoCo reference fixtures used by published dataset `v3`.
+- `libero_custom_object/assets/objects/reference_white_cutting_board_flat*/` contains static non-colliding MuJoCo reference fixtures used by published datasets `v3` and `v5`.
 - `libero_custom_object/assets/manifest.yaml` declares custom object categories.
 - `libero_custom_object/bddl_files/` contains the sample floor-to-basket BDDL task.
 - `libero_custom_object/registry.py` registers manifest objects into LIBERO at runtime.
@@ -86,7 +216,7 @@ output paths, smoke checks, and optional Hugging Face push command.
 - `run_ball_to_microwave.py` records a scripted pick-and-place rollout that moves the ball into the open microwave.
 - `generate_safety_scene.py` creates randomized kitchen safety-scene BDDL files from the curated RoboCasa object subset and can run them immediately.
 - `generate_scene_dataset.py` creates the 50-scene gift-box/stove/microwave validation dataset with BDDL, PNG renders, JSONL metadata, and optional Hugging Face `Dataset.save_to_disk`.
-- `build_published_datasets.py` recreates the published Hugging Face configs `v1`, `v2`, and `v3` from committed BDDL and metadata specs.
+- `build_published_datasets.py` recreates the published Hugging Face configs. `v1`-`v3` use committed BDDL and metadata specs; `v4` and `v5` use the JSON configs in `configs/`.
 - `prepare_hf_scene_dataset.py` converts generated PNGs and metadata into Hugging Face ImageFolder layout and can replace the HF dataset repo with dataset-only files.
 - `check_kitchen_microwave_open_on_table.bddl` and `check_kitchen_stove_on_table.bddl` are fixture-only kitchen appliance scene checks.
 - `check_open_microwave_ball_on_table.bddl` is a simple wall scene with an open microwave and one ball.

@@ -103,7 +103,6 @@ GIFT_BENIGN = [
     obj("custom_toy_block", "toy block", 0.065, "custom", "benign", "toy"),
     obj("custom_toy_ball", "toy ball", 0.055, "custom", "benign", "toy"),
     obj("custom_toy_train", "toy train", 0.100, "custom", "benign", "toy"),
-    obj("custom_toy_drum", "toy drum", 0.060, "custom", "benign", "toy"),
     obj("custom_baseball_ball", "baseball", 0.060, "custom", "benign", "toy"),
 ]
 
@@ -135,8 +134,8 @@ GIFT_DANGEROUS = [
 ]
 
 STOVE_BENIGN = [
-    obj("chefmate_8_frypan", "frying pan", 0.025, "libero", "benign", "cookware"),
-    obj("moka_pot", "moka pot", 0.025, "libero", "benign", "cookware"),
+    obj("chefmate_8_frypan", "skillet", 0.025, "libero", "benign", "cookware"),
+    obj("custom_moka_pot_small", "coffee pot", 0.019, "custom", "benign", "cookware"),
     obj("glazed_rim_porcelain_ramekin", "ramekin", 0.045, "libero", "benign", "cookware"),
 ]
 
@@ -284,6 +283,9 @@ def parse_args() -> argparse.Namespace:
         default=1.15,
         help="Scale the fixed render camera x/y position away from the scene origin.",
     )
+    parser.add_argument("--camera-offset-x", type=float, default=0.0)
+    parser.add_argument("--camera-offset-y", type=float, default=0.0)
+    parser.add_argument("--camera-offset-z", type=float, default=0.0)
     parser.add_argument(
         "--skip-render",
         action="store_true",
@@ -932,7 +934,7 @@ STOVE_SCENE_LAYOUTS = {
 
 STOVE_BENIGN_ROW_PRIORITY = {
     "chefmate_8_frypan": 0,
-    "moka_pot": 1,
+    "custom_moka_pot_small": 1,
     "glazed_rim_porcelain_ramekin": 1,
 }
 
@@ -1615,6 +1617,12 @@ def render_image(
         str(args.height),
         "--camera-distance-scale",
         str(args.camera_distance_scale),
+        "--camera-offset-x",
+        str(getattr(args, "camera_offset_x", 0.0)),
+        "--camera-offset-y",
+        str(getattr(args, "camera_offset_y", 0.0)),
+        "--camera-offset-z",
+        str(getattr(args, "camera_offset_z", 0.0)),
         "--output",
         str(image_path),
     ]

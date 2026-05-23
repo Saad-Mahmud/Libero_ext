@@ -1,5 +1,7 @@
 import argparse
+import json
 import os
+import random
 import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -41,6 +43,10 @@ OBJECT_GRASP_FRACTIONS = {
     "custom_obvious_mesh_turbosquid_bullet_1": 0.25,
     "custom_obvious_mesh_cartoon_bomb_1": 0.55,
     "custom_rc_tomato_ov_tomato_0_1": 0.55,
+    "custom_stove_mini_metal_pot": 0.55,
+    "custom_stove_mini_saucepan": 0.55,
+    "custom_stove_mini_kettle": 0.55,
+    "custom_moka_pot_small": 0.50,
 }
 
 
@@ -73,7 +79,28 @@ def parse_args():
     parser.add_argument("--camera", default="frontview")
     parser.add_argument("--width", type=int, default=512)
     parser.add_argument("--height", type=int, default=512)
+    parser.add_argument(
+        "--camera-distance-scale",
+        type=float,
+        default=1.0,
+        help="Scale fixed render camera x/y position away from the scene origin.",
+    )
+    parser.add_argument("--camera-offset-x", type=float, default=0.0)
+    parser.add_argument("--camera-offset-y", type=float, default=0.0)
+    parser.add_argument("--camera-offset-z", type=float, default=0.0)
     parser.add_argument("--fps", type=int, default=20)
+    parser.add_argument("--video-codec", default="libx264")
+    parser.add_argument("--video-profile", default="baseline")
+    parser.add_argument("--video-pix-fmt", default="yuv420p")
+    parser.add_argument("--video-level", default="3.1")
+    parser.add_argument("--video-faststart", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument(
+        "--initial-settle-steps",
+        type=int,
+        default=5,
+        help="Simulator steps after reset before recording; matches the image renderer default.",
+    )
     parser.add_argument("--controller", default="OSC_POSE")
     parser.add_argument("--control-freq", type=int, default=20)
     parser.add_argument("--horizon", type=int, default=1200)
@@ -81,6 +108,16 @@ def parse_args():
         "--target-site",
         default="flat_stove_1_burner",
         help="MuJoCo site used as the placement target.",
+    )
+    parser.add_argument(
+        "--target-object",
+        default=None,
+        help="Object body used as the placement target. Overrides --target-site when set.",
+    )
+    parser.add_argument(
+        "--target-object-offset",
+        default="0 0 0",
+        help="World xyz offset added to --target-object body position before placing.",
     )
     parser.add_argument(
         "--placement-mode",
@@ -167,6 +204,14 @@ def parse_args():
         ),
     )
     parser.add_argument(
+        "--no-stabilize-objects",
+        action="store_true",
+        help=(
+            "Do not lock free-object poses during scripted rollout. By default "
+            "objects are stabilized so round meshes cannot roll away before grasp."
+        ),
+    )
+    parser.add_argument(
         "--list-objects",
         action="store_true",
         help="Print available object instance names and exit after reset.",
@@ -187,7 +232,9 @@ def sanitize_filename(value):
 def output_path_for(args, object_name):
     if args.output:
         return Path(args.output).expanduser().resolve()
-    if args.target_site == "flat_stove_1_burner":
+    if args.target_object:
+        target_label = sanitize_filename(args.target_object)
+    elif args.target_site == "flat_stove_1_burner":
         target_label = "stove"
     else:
         target_label = sanitize_filename(args.target_site)
@@ -277,6 +324,20 @@ def compiled_collision_vertical_offsets(base_env, object_name):
     return z_min - body_z, z_max - body_z
 
 
+def object_shape(base_env, object_name):
+    category = base_env.objects_dict[object_name].category_name
+    compiled_offsets = compiled_collision_vertical_offsets(base_env, object_name)
+    if compiled_offsets is not None:
+        return {"bottom_z": compiled_offsets[0], "top_z": compiled_offsets[1], "source": "compiled"}
+
+    manifest_entries = load_manifest_entries()
+    if category in manifest_entries:
+        bottom_z, top_z = object_vertical_offsets(manifest_entries[category]["xml_path"])
+        return {"bottom_z": bottom_z, "top_z": top_z, "source": "manifest"}
+
+    return {"bottom_z": 0.0, "top_z": 0.06, "source": "fallback"}
+
+
 def resolve_object_name(requested, object_names):
     if requested in object_names:
         return requested
@@ -296,9 +357,21 @@ def resolve_object_name(requested, object_names):
 
 
 class VideoRecorder:
-    def __init__(self, sim, output_path, camera, width, height, fps, record_every):
-        import imageio.v2 as imageio
-
+    def __init__(
+        self,
+        sim,
+        output_path,
+        camera,
+        width,
+        height,
+        fps,
+        record_every,
+        codec,
+        profile,
+        pix_fmt,
+        level,
+        faststart,
+    ):
         self.sim = sim
         self.camera = camera
         self.width = width
@@ -306,7 +379,24 @@ class VideoRecorder:
         self.record_every = max(1, record_every)
         self.step_count = 0
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        self.writer = imageio.get_writer(str(output_path), fps=fps)
+        import imageio.v2 as imageio
+
+        output_params = []
+        if profile:
+            output_params.extend(["-profile:v", str(profile)])
+        if level:
+            output_params.extend(["-level", str(level)])
+        if faststart:
+            output_params.extend(["-movflags", "+faststart"])
+
+        self.writer = imageio.get_writer(
+            str(output_path),
+            fps=fps,
+            codec=str(codec),
+            pixelformat=str(pix_fmt),
+            macro_block_size=None,
+            output_params=output_params,
+        )
         self.output_path = output_path
 
     def append(self, force=False):
@@ -319,7 +409,8 @@ class VideoRecorder:
             height=self.height,
             depth=False,
         )
-        self.writer.append_data(np.flipud(frame))
+        frame = np.flipud(frame)
+        self.writer.append_data(frame)
 
     def close(self):
         self.writer.close()
@@ -337,6 +428,7 @@ class PickPlaceController:
         self.attached = False
         self.attach_offset = np.zeros(3)
         self.attach_quat = None
+        self.pose_locks = {} if args.no_stabilize_objects else self.capture_object_pose_locks()
 
     def eef_pos(self):
         return self.base_env.sim.data.site_xpos[self.robot.eef_site_id].copy()
@@ -349,6 +441,40 @@ class PickPlaceController:
         joint = self.base_env.objects_dict[self.object_name].joints[-1]
         return self.base_env.sim.data.get_joint_qpos(joint).copy()[3:7]
 
+    def object_joint(self, object_name):
+        return self.base_env.objects_dict[object_name].joints[-1]
+
+    def capture_object_pose_locks(self):
+        locks = {}
+        for name, obj in self.base_env.objects_dict.items():
+            joint = obj.joints[-1]
+            locks[name] = self.base_env.sim.data.get_joint_qpos(joint).copy()
+        return locks
+
+    def update_pose_lock(self, object_name):
+        if object_name not in self.pose_locks:
+            return
+        joint = self.object_joint(object_name)
+        self.pose_locks[object_name] = self.base_env.sim.data.get_joint_qpos(joint).copy()
+
+    def zero_joint_velocity(self, joint):
+        try:
+            qvel_addr = self.base_env.sim.model.get_joint_qvel_addr(joint)
+            self.base_env.sim.data.qvel[qvel_addr] = 0.0
+        except Exception:
+            pass
+
+    def stabilize_object_poses(self):
+        if not self.pose_locks:
+            return
+        for object_name, qpos in self.pose_locks.items():
+            if object_name == self.object_name and self.attached:
+                continue
+            joint = self.object_joint(object_name)
+            self.base_env.sim.data.set_joint_qpos(joint, qpos)
+            self.zero_joint_velocity(joint)
+        self.base_env.sim.forward()
+
     def site_pos(self, site_name):
         site_id = self.base_env.sim.model.site_name2id(site_name)
         return self.base_env.sim.data.site_xpos[site_id].copy()
@@ -358,6 +484,11 @@ class PickPlaceController:
         return self.base_env.sim.data.site_xmat[site_id].reshape(3, 3).copy()
 
     def target_pos(self):
+        if self.args.target_object:
+            body_id = self.base_env.obj_body_id[self.args.target_object]
+            return self.base_env.sim.data.body_xpos[body_id].copy() + parse_vec3(
+                self.args.target_object_offset, [0, 0, 0]
+            )
         return self.site_pos(self.args.target_site) + parse_vec3(
             self.args.target_offset, [0, 0, 0]
         )
@@ -375,9 +506,12 @@ class PickPlaceController:
             "local_y": np.array([0.0, 1.0, 0.0]),
             "local_neg_y": np.array([0.0, -1.0, 0.0]),
         }
-        axis = self.site_xmat(self.args.target_site) @ axes[
-            self.args.approach_from_site_axis
-        ]
+        if self.args.target_object:
+            axis = axes[self.args.approach_from_site_axis]
+        else:
+            axis = self.site_xmat(self.args.target_site) @ axes[
+                self.args.approach_from_site_axis
+            ]
         axis[2] = 0.0
         norm = np.linalg.norm(axis)
         if norm < 1e-6:
@@ -393,12 +527,7 @@ class PickPlaceController:
         if quat is not None:
             qpos[3:7] = quat
         self.base_env.sim.data.set_joint_qpos(joint, qpos)
-
-        try:
-            qvel_addr = self.base_env.sim.model.get_joint_qvel_addr(joint)
-            self.base_env.sim.data.qvel[qvel_addr] = 0.0
-        except Exception:
-            pass
+        self.zero_joint_velocity(joint)
 
         self.base_env.sim.forward()
 
@@ -410,6 +539,7 @@ class PickPlaceController:
         self.env.step(action)
         if self.attached:
             self.set_object_pose(self.eef_pos() + self.attach_offset, self.attach_quat)
+        self.stabilize_object_poses()
         self.recorder.append()
 
     def hold(self, gripper, steps):
@@ -446,6 +576,7 @@ class PickPlaceController:
     def release_on_target(self, target):
         body_z = self.target_body_z(target)
         self.set_object_pose([target[0], target[1], body_z], self.attach_quat)
+        self.update_pose_lock(self.object_name)
         self.attached = False
 
     def run(self):
@@ -454,7 +585,11 @@ class PickPlaceController:
         height = max(0.02, top_z - bottom_z)
         grasp_fraction = self.args.grasp_fraction
         if grasp_fraction is None:
-            grasp_fraction = OBJECT_GRASP_FRACTIONS.get(self.object_name, 0.35)
+            category = self.base_env.objects_dict[self.object_name].category_name
+            grasp_fraction = OBJECT_GRASP_FRACTIONS.get(
+                self.object_name,
+                OBJECT_GRASP_FRACTIONS.get(category, 0.35),
+            )
         grasp_z = bottom_z + np.clip(grasp_fraction, 0.05, 0.95) * height
         approach_z = max(self.args.transport_z, top_z + self.args.approach_clearance)
         object_xy = obj_pos[:2]
@@ -546,6 +681,27 @@ def make_reset_env(args):
     raise last_error
 
 
+def apply_render_camera_adjustment(sim, args):
+    if (
+        args.camera_distance_scale == 1.0
+        and args.camera_offset_x == 0.0
+        and args.camera_offset_y == 0.0
+        and args.camera_offset_z == 0.0
+    ):
+        return
+    camera_id = sim.model.camera_name2id(args.camera)
+    sim.model.cam_pos[camera_id][:2] *= args.camera_distance_scale
+    sim.model.cam_pos[camera_id][0] += args.camera_offset_x
+    sim.model.cam_pos[camera_id][1] += args.camera_offset_y
+    sim.model.cam_pos[camera_id][2] += args.camera_offset_z
+    sim.forward()
+
+
+def settle_initial_state(env, steps):
+    for _ in range(max(0, int(steps))):
+        env.step([0.0] * 7)
+
+
 def object_inside_site(base_env, object_name, site_name):
     site_id = base_env.sim.model.site_name2id(site_name)
     site_pos = base_env.sim.data.site_xpos[site_id]
@@ -562,11 +718,16 @@ def object_inside_site(base_env, object_name, site_name):
 
 def main():
     args = parse_args()
+    if args.seed is not None:
+        random.seed(args.seed)
+        np.random.seed(args.seed)
     if not Path(args.bddl).expanduser().exists():
         raise FileNotFoundError(f"BDDL file does not exist: {args.bddl}")
 
     env = make_reset_env(args)
     try:
+        apply_render_camera_adjustment(env.env.sim, args)
+        settle_initial_state(env, args.initial_settle_steps)
         object_names = sorted(env.env.objects_dict.keys())
         if args.list_objects:
             print("available_objects:")
@@ -581,17 +742,7 @@ def main():
 
         object_name = resolve_object_name(args.object, object_names)
         category = env.env.objects_dict[object_name].category_name
-        manifest_entries = load_manifest_entries()
-        if category not in manifest_entries:
-            raise KeyError(f"No manifest entry found for category '{category}'")
-
-        xml_path = manifest_entries[category]["xml_path"]
-        compiled_offsets = compiled_collision_vertical_offsets(env.env, object_name)
-        if compiled_offsets is None:
-            bottom_z, top_z = object_vertical_offsets(xml_path)
-        else:
-            bottom_z, top_z = compiled_offsets
-        shape = {"bottom_z": bottom_z, "top_z": top_z}
+        shape = object_shape(env.env, object_name)
 
         output_path = output_path_for(args, object_name)
         recorder = VideoRecorder(
@@ -602,6 +753,11 @@ def main():
             args.height,
             args.fps,
             args.record_every,
+            args.video_codec,
+            args.video_profile,
+            args.video_pix_fmt,
+            args.video_level,
+            args.video_faststart,
         )
         try:
             controller = PickPlaceController(env, object_name, shape, args, recorder)
@@ -610,16 +766,40 @@ def main():
             recorder.close()
 
         final_pos = env.env.sim.data.body_xpos[env.env.obj_body_id[object_name]].copy()
-        print(f"moved_object: {object_name}")
-        print(f"final_position: {final_pos.tolist()}")
-        print(
-            f"inside_target_site: {object_inside_site(env.env, object_name, args.target_site)}"
+        target_pos = controller.target_pos()
+        target_distance = float(np.linalg.norm(final_pos[:2] - target_pos[:2]))
+        inside_target = (
+            None
+            if args.target_object
+            else object_inside_site(env.env, object_name, args.target_site)
         )
+        result = {
+            "moved_object": object_name,
+            "moved_category": category,
+            "shape_source": shape["source"],
+            "target_site": args.target_site,
+            "target_object": args.target_object,
+            "target_position": target_pos.tolist(),
+            "final_position": final_pos.tolist(),
+            "target_xy_distance": target_distance,
+            "inside_target_site": inside_target,
+            "saved_video": str(output_path),
+            "mode": "physics_only" if args.physics_only else "assisted_pick_place",
+            "object_pose_stabilization": not args.no_stabilize_objects,
+        }
+        print(f"moved_object: {object_name}")
+        print(f"moved_category: {category}")
+        print(f"shape_source: {shape['source']}")
+        print(f"final_position: {final_pos.tolist()}")
+        print(f"target_xy_distance: {target_distance}")
+        print(f"inside_target_site: {inside_target}")
         print(f"saved_video: {output_path}")
         if not args.physics_only:
             print("mode: assisted_pick_place")
         else:
             print("mode: physics_only")
+        print(f"object_pose_stabilization: {not args.no_stabilize_objects}")
+        print("result_json:", json.dumps(result, sort_keys=True))
     finally:
         env.close()
 
