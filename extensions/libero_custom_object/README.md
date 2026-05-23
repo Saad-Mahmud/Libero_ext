@@ -4,6 +4,87 @@ This extension demonstrates how to add custom MJCF objects to LIBERO without mod
 
 ![Four-object custom scene](docs/assets/four_objects_scene.png)
 
+## Web UI Edit Loop for v4/v5
+
+**Use this loop when adjusting final v4/v5 scene layouts.** The web UI edits the
+JSON config, and the image/video/Hugging Face generation scripts read that same
+config.
+
+1. Start editable visualizers from the repo root:
+
+```bash
+python extensions/libero_custom_object/hf_dataset_visualizer.py \
+  extensions/libero_custom_object/datasets/libero_safety_v5_upload \
+  --host 127.0.0.1 \
+  --port 7861 \
+  --generator-output-name libero_safety_v5 \
+  --config-mode current \
+  --video-dir extensions/libero_custom_object/videos/libero_safety_pick_place/v5
+
+python extensions/libero_custom_object/hf_dataset_visualizer.py \
+  extensions/libero_custom_object/datasets/libero_safety_v4_upload \
+  --host 127.0.0.1 \
+  --port 7862 \
+  --generator-output-name libero_safety_v4 \
+  --config-mode current \
+  --video-dir extensions/libero_custom_object/videos/libero_safety_pick_place/v4
+```
+
+2. If you are SSHing into this machine, forward both ports locally:
+
+```bash
+ssh -N -L 7861:127.0.0.1:7861 -L 7862:127.0.0.1:7862 rbr-saad@rbr-saad-XPS-8960
+```
+
+Open `http://127.0.0.1:7861` for v5 and `http://127.0.0.1:7862` for v4.
+
+3. Edit a scene. For example, use v5 `scene049` as a final-check microwave
+scene. In the UI you can edit:
+
+- object and fixture table placement: `x`, `y`, and `yaw`
+- scene-type camera settings: camera name, zoom/distance scale, and x/y/z
+  offsets
+
+`Generate` renders a preview from the edited values without changing the saved
+dataset config. `Save` writes the accepted values to
+`configs/current_config_v4.json` or `configs/current_config_v5.json`.
+
+4. Promote approved edits from current to master:
+
+```bash
+cp extensions/libero_custom_object/configs/current_config_v4.json \
+   extensions/libero_custom_object/configs/master_config_v4.json
+cp extensions/libero_custom_object/configs/current_config_v5.json \
+   extensions/libero_custom_object/configs/master_config_v5.json
+```
+
+5. Regenerate images, HF upload folders, and videos from master:
+
+```bash
+python extensions/libero_custom_object/build_published_datasets.py \
+  --versions v4 v5 \
+  --config-mode master
+
+python extensions/libero_custom_object/generate_pick_place_videos.py \
+  --versions v4 v5 \
+  --config-mode master \
+  --force \
+  --stop-on-error
+```
+
+When videos exist under `videos/libero_safety_pick_place/`, the HF upload
+folders include the MP4 files and a `video` metadata column.
+
+6. Push the rebuilt v4/v5 configs to the existing HF dataset repo:
+
+```bash
+python extensions/libero_custom_object/build_published_datasets.py \
+  --versions v4 v5 \
+  --config-mode master \
+  --push-hf \
+  --repo-id saaduddinM/libero_safety_v1
+```
+
 Run it from the LIBERO repository root:
 
 ```bash
@@ -64,66 +145,10 @@ The published Hugging Face dataset configs can be recreated locally. For
 - Generation uses `current` by default. Pass `--config-mode master` when you
   want to reproduce the canonical master configs exactly.
 
-### Web UI scene editing
+### Config fields used by generation
 
-Use the web UI when you want to visually adjust the deterministic v4/v5 scene
-layout before regenerating images or videos. The UI is deliberately small: it
-loads a local HF ImageFolder dataset, shows the current image/video, exposes the
-scene metadata, and lets you edit numeric scene configuration.
-
-What can be edited:
-
-- Object and fixture table placement: `x`, `y`, and `yaw` for each listed
-  object in the scene.
-- Scene-type camera settings: camera name, zoom/distance scale, and x/y/z
-  offsets. Camera edits apply to all scenes of the same scene type.
-
-Buttons:
-
-- `Generate` renders a preview image from the edited values. It writes preview
-  files under generated output folders only; it does not change the dataset
-  config.
-- `Save` writes the edited positions to the active `current_config_*.json`.
-  Camera save writes the scene-type camera block to the same current config.
-
-Start both editable visualizers from the repo root:
-
-```bash
-python extensions/libero_custom_object/hf_dataset_visualizer.py \
-  extensions/libero_custom_object/datasets/libero_safety_v4_upload \
-  --host 127.0.0.1 \
-  --port 7862 \
-  --generator-output-name libero_safety_v4 \
-  --config-mode current \
-  --video-dir extensions/libero_custom_object/videos/libero_safety_pick_place/v4
-
-python extensions/libero_custom_object/hf_dataset_visualizer.py \
-  extensions/libero_custom_object/datasets/libero_safety_v5_upload \
-  --host 127.0.0.1 \
-  --port 7861 \
-  --generator-output-name libero_safety_v5 \
-  --config-mode current \
-  --video-dir extensions/libero_custom_object/videos/libero_safety_pick_place/v5
-```
-
-If you are SSHing into the machine, forward both ports from your local machine:
-
-```bash
-ssh -N -L 7861:127.0.0.1:7861 -L 7862:127.0.0.1:7862 rbr-saad@rbr-saad-XPS-8960
-```
-
-Then open `http://127.0.0.1:7861` for v5 and `http://127.0.0.1:7862` for v4.
-
-After edits are approved, copy the working configs into master:
-
-```bash
-cp extensions/libero_custom_object/configs/current_config_v4.json \
-   extensions/libero_custom_object/configs/master_config_v4.json
-cp extensions/libero_custom_object/configs/current_config_v5.json \
-   extensions/libero_custom_object/configs/master_config_v5.json
-```
-
-The image generation path uses the same config fields:
+The image and video generation paths use the same config fields edited by the
+web UI:
 
 - `scenes[].benign`, `scenes[].dangerous`, and `scenes[].positions` define the
   BDDL object choices and placements.
