@@ -2,7 +2,7 @@
 
 This extension demonstrates how to add custom MJCF objects to LIBERO without modifying LIBERO core source files or built-in asset folders.
 
-![Four-object custom scene](docs/assets/four_objects_scene.png)
+![V5 scene049 microwave scene with reference cutting board](docs/assets/v5_scene049.png)
 
 ## Web UI Edit Loop for v4/v5
 
